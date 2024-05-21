@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         status = 1,
         score = " . $jsonData['score'] . ",
         date = '" . date('Y-m-d') . "'
-        WHERE ticket = '" . $jsonData['ticket'] . "'";
+        WHERE ticket = '" . $jsonData['ticket'] . "' AND status = 0";
 
     $result = $mysqli->query($sql);
     if ($mysqli->query($sql) == 1) {
