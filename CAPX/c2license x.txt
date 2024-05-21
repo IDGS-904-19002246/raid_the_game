@@ -1,0 +1,9 @@
+License type: PERSONAL
+Product: Construct 2
+Licensed to: Petshopper
+Email: pet@cgp.jp
+Comment: With best wishes from Figgler [mrfiggler@gmail.com]
+Timestamp: 1320000001
+Hash: D7265F9A78DB5400ABCF18470343CB60C09DE1EEF371382
+
+This is PRIVATE license

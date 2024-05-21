@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>LoadingSettings</name>
+    <events>
+        <event-block sid="2611697654975994">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="5921229294454645" type="System" />
+            </conditions>
+            <actions>
+                <action id="0" name="Set text" sid="1563416620992502" type="LoadingFont">
+                    <param id="0" name="Text">round(loadingprogress*100)&amp;&quot;%&quot;</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="1922465596694407">
+            <conditions>
+                <condition id="-25" name="On loader layout complete" sid="3624528299905031" type="System" />
+            </conditions>
+            <actions>
+                <action id="0" name="Play" sid="7704380717743479" type="Audio">
+                    <param id="0" name="Audio file">POL-space-ranger-short</param>
+                    <param id="2" name="Loop">1</param>
+                    <param id="3" name="Volume">-10</param>
+                    <param id="1" name="Tag (optional)">&quot;Music&quot;</param>
+                </action>
+                <action id="-2" name="Go to layout" sid="4126307145127889" type="System">
+                    <param id="0" name="Layout">StartMenu</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

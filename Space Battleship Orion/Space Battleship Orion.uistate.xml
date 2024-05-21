@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2uistate>
+    <!--This is a UI state file - its content describes the user interface settings when the project was last open.
+It is entirely optional and the project will load without it.  If you are placing the project under source control,
+you probably do not want to add any .uistate.xml files to the repository.-->
+    <configurations>
+        <active>
+            <configuration name="HTML5" />
+        </active>
+        <display name="HTML5" />
+    </configurations>
+    <open-tabs>
+        <layout active="1" order="0">Loading</layout>
+        <layout order="1">StartMenu</layout>
+        <layout order="2">Game</layout>
+        <event-sheet order="3">AddSettings</event-sheet>
+        <event-sheet order="4">GameSettings</event-sheet>
+    </open-tabs>
+    <properties>
+        <property expanded="1" name="About" />
+        <property expanded="1" name="Project settings" />
+        <property expanded="1" name="Window Size" />
+        <property expanded="1" name="Configuration Settings" />
+    </properties>
+    <families-expanded root="0">
+        <family expanded="0" name="MouseOver" />
+        <family expanded="0" name="ButtonsSound" />
+        <family expanded="0" name="item" />
+        <family expanded="1" name="Enemy" />
+    </families-expanded>
+    <folders-expanded>
+        <folder expanded="0" path="object-folder/" />
+        <folder expanded="0" path="layout-folder/" />
+        <folder expanded="0" path="event-folder/" />
+        <folder expanded="0" path="file-folder/" />
+        <folder expanded="0" path="sound-folder/" />
+        <folder expanded="0" path="music-folder/" />
+        <folder expanded="0" path="file-folder/Icons/" />
+        <folder expanded="1" path="animation-folder/BtnMoreGames/" />
+        <folder expanded="1" path="animation-folder/BtnMusic/" />
+        <folder expanded="1" path="animation-folder/Background1/" />
+        <folder expanded="1" path="animation-folder/BtnStart/" />
+        <folder expanded="1" path="animation-folder/Cursor/" />
+        <folder expanded="1" path="animation-folder/CursorHover/" />
+        <folder expanded="1" path="animation-folder/Player/" />
+        <folder expanded="1" path="animation-folder/Enemy2/" />
+        <folder expanded="1" path="animation-folder/Enemy1/" />
+        <folder expanded="1" path="animation-folder/SuperBullet/" />
+        <folder expanded="1" path="animation-folder/Explosion/" />
+        <folder expanded="1" path="animation-folder/Collision/" />
+        <folder expanded="1" path="animation-folder/Score500/" />
+        <folder expanded="1" path="animation-folder/Score250/" />
+        <folder expanded="1" path="animation-folder/Score200/" />
+        <folder expanded="1" path="animation-folder/Score100/" />
+        <folder expanded="1" path="animation-folder/Joystick/" />
+        <folder expanded="1" path="animation-folder/JoystickBase/" />
+        <folder expanded="1" path="animation-folder/JoystickStick/" />
+        <folder expanded="1" path="animation-folder/ArrowUp/" />
+        <folder expanded="1" path="animation-folder/JoystickArea/" />
+        <folder expanded="1" path="animation-folder/PlayerCollision/" />
+        <folder expanded="1" path="animation-folder/ArrowDown/" />
+        <folder expanded="1" path="animation-folder/ArrowLeft/" />
+        <folder expanded="1" path="animation-folder/ArrowRight/" />
+        <folder expanded="1" path="animation-folder/meteorbg/" />
+        <folder expanded="1" path="animation-folder/Frame/" />
+        <folder expanded="1" path="animation-folder/AddPower/" />
+        <folder expanded="1" path="animation-folder/AddLife/" />
+        <folder expanded="1" path="animation-folder/FuelBar/" />
+        <folder expanded="1" path="animation-folder/LifeBar/" />
+        <folder expanded="1" path="animation-folder/LifeBarLine/" />
+        <folder expanded="1" path="animation-folder/AmmoBarLine/" />
+        <folder expanded="1" path="animation-folder/FuelBarLIne/" />
+        <folder expanded="1" path="animation-folder/RocketBarLine/" />
+        <folder expanded="1" path="animation-folder/AddSuperBullet/" />
+        <folder expanded="1" path="animation-folder/Bullet/" />
+        <folder expanded="1" path="animation-folder/EnemyCanon/" />
+        <folder expanded="1" path="animation-folder/Enemy3/" />
+        <folder expanded="1" path="animation-folder/GameLogo/" />
+        <folder expanded="1" path="animation-folder/EnemyFighter2/" />
+        <folder expanded="1" path="animation-folder/EnemyBoss/" />
+        <folder expanded="1" path="animation-folder/ExplosionBig/" />
+        <folder expanded="1" path="animation-folder/loading_bar/" />
+        <folder expanded="1" path="animation-folder/eBullet0/" />
+        <folder expanded="1" path="animation-folder/Score50/" />
+        <folder expanded="1" path="animation-folder/Fade/" />
+        <folder expanded="1" path="animation-folder/BtnPause/" />
+        <folder expanded="1" path="animation-folder/Sprite/" />
+        <folder expanded="1" path="animation-folder/shake/" />
+        <folder expanded="1" path="animation-folder/Sprite2/" />
+        <folder expanded="1" path="animation-folder/Sprite3/" />
+        <folder expanded="1" path="animation-folder/BtnBack/" />
+        <folder expanded="1" path="animation-folder/eBullet1/" />
+        <folder expanded="1" path="animation-folder/eBullet2/" />
+        <folder expanded="1" path="animation-folder/support/" />
+        <folder expanded="1" path="animation-folder/ExplosionSmall/" />
+        <folder expanded="1" path="animation-folder/support_bullet/" />
+        <folder expanded="1" path="animation-folder/shipmenu/" />
+        <folder expanded="1" path="animation-folder/shield/" />
+        <folder expanded="1" path="animation-folder/AddShiled/" />
+        <folder expanded="1" path="animation-folder/asteroid/" />
+    </folders-expanded>
+</c2uistate>

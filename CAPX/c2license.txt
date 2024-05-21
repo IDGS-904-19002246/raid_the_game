@@ -1,0 +1,9 @@
+License type: BUSINESS
+Product: Construct 2
+Licensed to: krokus
+Email: krokus@gmail.com
+Comment:
+Timestamp: 1451867216
+Hash: F02E9FACDB916A6B793D4DEBC4307411816C385D675E85F11
+
+This is a PRIVATE license
