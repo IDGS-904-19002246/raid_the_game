@@ -1,6 +1,18 @@
 <?php
 include 'database.php';
 // http://localhost/HTML5/index.html?ticket=
+// CREATE TABLE `tbl_puntajes` (
+// 	`id` INT(10) NOT NULL AUTO_INCREMENT,
+// 	`ticket` VARCHAR(50) NOT NULL DEFAULT '' COLLATE 'utf8mb4_0900_ai_ci',
+// 	`score` INT(10) NOT NULL,
+// 	`status` INT(10) NULL DEFAULT NULL,
+// 	`date` DATE NULL DEFAULT NULL,
+// 	PRIMARY KEY (`id`) USING BTREE
+// )
+// COLLATE='utf8mb4_0900_ai_ci'
+// ENGINE=InnoDB
+// AUTO_INCREMENT=8
+// ;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mysqli = conectarDB();
