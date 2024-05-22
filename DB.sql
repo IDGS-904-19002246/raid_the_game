@@ -22,27 +22,26 @@ USE `db_juegos`;
 -- Volcando estructura para tabla db_juegos.tbl_puntajes
 CREATE TABLE IF NOT EXISTS `tbl_puntajes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `ticket` varchar(50) NOT NULL DEFAULT '',
+  `user_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `telephone` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `email` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `city` varchar(50) DEFAULT NULL,
+  `state` varchar(50) DEFAULT NULL,
+  `ticket` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
+  `establishment` varchar(50) DEFAULT NULL,
+  `ticket_verificado` int DEFAULT NULL,
+  `photo` varchar(50) DEFAULT NULL,
   `score` int NOT NULL,
   `status` int DEFAULT NULL,
   `date` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla db_juegos.tbl_puntajes: ~0 rows (aproximadamente)
-INSERT INTO `tbl_puntajes` (`id`, `ticket`, `score`, `status`, `date`) VALUES
-	(6, 'zzz', 555, 1, '2024-05-20'),
-	(7, 'xxx', 666, 1, '2024-05-18');
-
--- Volcando estructura para tabla db_juegos.tbl_tickets
-CREATE TABLE IF NOT EXISTS `tbl_tickets` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `estado` int NOT NULL,
-  `clave` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Volcando datos para la tabla db_juegos.tbl_tickets: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla db_juegos.tbl_puntajes: ~3 rows (aproximadamente)
+INSERT INTO `tbl_puntajes` (`id`, `user_name`, `telephone`, `email`, `city`, `state`, `ticket`, `establishment`, `ticket_verificado`, `photo`, `score`, `status`, `date`) VALUES
+	(6, 'juan 1', '4771111111', 'juan1@gmail.com', 'leon', 'guanajuato', 'zzz', 'f', 0, 'ticket1.png', 555, 1, '2024-05-20'),
+	(7, 'juan 2', '4771111112', 'juan1@gmail.com', 'leon', 'guanajuato', 'xxx', 'f', 0, 'ticket2.png', 3000, 1, '2024-05-21'),
+	(8, 'juan 2', '4771111113', 'juan3@gmail.com', 'leon', 'guanajuato', 'yyy', 'e', 0, 'ticket3.png', 100, 0, '2024-05-21');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
