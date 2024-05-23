@@ -18,6 +18,36 @@
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <!-- MY ASSETS -->
     <link rel="stylesheet" href="assets/estyles.css">
+    <style>
+    /* .full-width-img {
+      
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .zoom-on-hover:hover {
+      transform: scale(5);
+    }
+
+    .zoom-container {
+        cursor: grab;
+      overflow: hidden; 
+    } */
+
+    .full-width-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease; /* Transición suave en el efecto de zoom */
+    }
+
+    .zoom-container {
+      height: 200px; /* Altura del contenedor */
+      border: 1px solid #ccc;
+      overflow: hidden; /* Oculta el contenido adicional de la imagen fuera del contenedor */
+      cursor: grab; /* Cambia el cursor a una mano abierta */
+    }
+  </style>
 </head>
 
 <body>
@@ -125,10 +155,10 @@
                     </div>
                     <h4><b>Establecimiento:</b> <span id="establishment"></span></h4>
 
-                    <div class="">
+                    <div class="zoom-container" id="zoom-container">
                         <img id="photo" src="" alt="NO_IMG"
-                        class="rounded-3"
-                        style="width: 100%;height: 100%;object-fit: cover;">
+                        class="rounded-3 full-width-img"
+                        style="width: 100%;object-fit: cover;">
                     </div>
 
                 </div>
@@ -173,6 +203,29 @@
 <script>
 $(document).ready(function() {
     $('#miTabla').DataTable();
+
+
+    var isDragging = false;
+      var startCoordinates = { x: 0, y: 0 };
+      var currentCoordinates = { x: 0, y: 0 };
+
+      $('#zoom-container').on('mousedown', function(event) {
+        isDragging = true;
+        startCoordinates.x = event.clientX - currentCoordinates.x;
+        startCoordinates.y = event.clientY - currentCoordinates.y;
+      });
+
+      $(document).on('mousemove', function(event) {
+        if (isDragging) {
+          currentCoordinates.x = event.clientX - startCoordinates.x;
+          currentCoordinates.y = event.clientY - startCoordinates.y;
+          $('#zoom-container').css('transform', 'translate(' + currentCoordinates.x + 'px, ' + currentCoordinates.y + 'px)');
+        }
+      }).on('mouseup', function() {
+        isDragging = false;
+      });
+    // --------------------
+
 });
 const btnAlert = document.querySelectorAll('.btn-to-alert');
 const btnModalInsert = $('#to_insert')[0];
