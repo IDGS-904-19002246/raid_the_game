@@ -35,13 +35,15 @@ CREATE TABLE IF NOT EXISTS `tbl_puntajes` (
   `status` int DEFAULT NULL,
   `date` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla db_juegos.tbl_puntajes: ~3 rows (aproximadamente)
+-- Volcando datos para la tabla db_juegos.tbl_puntajes: ~5 rows (aproximadamente)
 INSERT INTO `tbl_puntajes` (`id`, `user_name`, `telephone`, `email`, `city`, `state`, `ticket`, `establishment`, `ticket_verificado`, `photo`, `score`, `status`, `date`) VALUES
-	(6, 'juan 1', '4771111111', 'juan1@gmail.com', 'leon', 'guanajuato', 'zzz', 'f', 0, 'ticket1.png', 555, 1, '2024-05-20'),
-	(7, 'juan 2', '4771111112', 'juan1@gmail.com', 'leon', 'guanajuato', 'xxx', 'f', 0, 'ticket2.png', 3000, 1, '2024-05-21'),
-	(8, 'juan 2', '4771111113', 'juan3@gmail.com', 'leon', 'guanajuato', 'yyy', 'e', 0, 'ticket3.png', 100, 0, '2024-05-21');
+	(6, 'juan 1', '4771111111', 'juan1@gmail.com', 'leon', 'Guanajuato', 'zzz', 'A', 0, 'zzz.png', 555, 1, '2024-05-20'),
+	(7, 'juan 2', '4771111112', 'juan1@gmail.com', 'leon', 'Guanajuato', 'xxx', 'A', 0, 'xxx.png', 3000, 1, '2024-05-21'),
+	(8, 'juan 2', '4771111113', 'juan3@gmail.com', 'leon', 'Guanajuato', 'yyy', 'F', 0, 'yyy.png', 100, 1, '2024-05-21'),
+	(10, 'juan 7  (2)', '4771111111', 'juan@gmail.com', 'leon', 'Guanajuato', 'bbb', 'A', 0, 'bbb.jpg', 0, 0, '2024-05-23'),
+	(16, 'juan 2', '4771111113', 'juan3@gmail.com', 'leon', 'Guanajuato', 'aaa', 'F', 0, 'aaa.png', 1500, 1, '2024-05-21');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
