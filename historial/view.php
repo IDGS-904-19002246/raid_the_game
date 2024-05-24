@@ -125,7 +125,10 @@
             "language": {
                 "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
             },
-            "order": [[3, 'desc']] // Ordena por la segunda columna (índice 1) de forma descendente
+            "order": [[3, 'desc']],
+            searching: false,
+            paging: false,
+            info: false
         });
     });
 </script>

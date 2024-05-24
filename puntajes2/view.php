@@ -17,96 +17,161 @@
     <link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <!-- SWEET ALERT -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <!-- MY ASSETS -->
+
     <style>
-        #miTabla_info, #miTabla_paginate a,
-        #miTabla_wrapper label, #miTabla_wrapper input{
-            color:#F9E94D;
-            font-weight: bolder;
-            font-size: 1.5rem;
-        }
-        .my_td{
-            background-color: transparent;
-            color:#F9E94D;
-        }
+    #miTabla_info,
+    #miTabla_paginate a,
+    #miTabla_wrapper label,
+    #miTabla_wrapper input {
+        color: #F9E94D;
+        font-weight: bolder;
+        font-size: 1.5rem;
+    }
+
+    .my_td,
+    .nav-link {
+        color: #F9E94D !important;
+    }
+
+    select {
+        background-color: yellow !important;
+    }
+
+    .my_bg {
+        background-image: url("https://expertosraid.com/wp-content/uploads/2024/05/Fondo_raid_royale_1.png");
+        background-position: 0px -1px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        /* https://expertosraid.com/wp-content/uploads/2024/05/Fondo-1-scaled.jpg */
+    }
+
+    .my_bg2 {
+        /* margin: 0;
+        padding: 0; */
+        height: 100vh;
+        background-image: url('https://expertosraid.com/wp-content/uploads/2024/05/Fondo-1-scaled.jpg');
+        background-repeat: repeat-y;
+        background-size: auto;
+    }
     </style>
 </head>
 
-<body style="background-color: transparent;">
+<body class="my_bg2">
+    <div class="container">
+        <div class="">
 
-    <div class="p-2">
-        <div class="row">
-            <!-- <div class="col-sm-3 bg-danger">
-                <table id="MyTop" class="table table-dark table-striped">
-                    <thead>
-                        <tr>
-                            <th>Posición</th>
-                            <th>Nombre</th>
-                            <th>Puntaje</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $contador = 1; ?>
-                        <?php foreach ($top as $d): ?>
-                        <tr>
-                            <td><?php echo $contador; ?></td>
-                            <td><?php echo $d['user_name']; ?></td>
-                            <td><?php echo $d['score']; ?> pts</td>
-
-                            <td><button class="btn btn-sm btn-warning btn-to-alert"
-                                    data-to-modal='<?php echo json_encode($d); ?>' data-bs-toggle="modal"
-                                    data-bs-target="#my_alert">+</button></td>
-                        </tr>
-                        <?php $contador++; ?>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+        </div>
+    </div>
+    <div class="p-2 my_bg">
+        <div class="row p-4">
+            <div class="col-sm-4">
+                <img src="https://expertosraid.com/wp-content/uploads/2024/05/Recurso-1.png" alt=""
+                    class="w-75 float-end">
             </div>
+            <div class="col-sm-8">
+                <nav class="navbar navbar-expand-lg navbar-light justify-content-end">
+                    <ul class="navbar-nav">
+                        <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
+                                href="#como-participar"><b><em>Cómo participar</em></b></a></li>
+                        <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
+                                href="#premios"><b><em>Premios</em></b></a></li>
+                        <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
+                                href="#productos"><b><em>Productos</em></b></a></li>
+                        <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
+                                href="#ranking"><b><em>Ranking</em></b></a></li>
+                        <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
+                                href="#ganadores"><b><em>Ganadores</em></b></a></li>
+                        <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
+                                href="#contacto"><b><em>Contacto</em></b></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
 
-            <div class="col-sm-1">
-                <button id="to_insert" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#my_modal">Dar de
-                    alta</button>
-            </div> -->
+        <div class="row" style="height:500px;">
 
             <div class="col-sm-12">
-                <table id="miTabla" class="table table-striped">
+                <table id="miTabla" class="table table-dark table-striped py-4">
                     <thead>
                         <tr class="text-center">
                             <th class="my_td"><b>#</b></th>
                             <th class="my_td"><b>Nombre</b></th>
+                            <th class="my_td"><b>Telefono</b></th>
+                            <th class="my_td"><b>Correo</b></th>
+                            <th class="my_td"><b>Cuidad</b></th>
+
                             <th class="my_td"><b>Ticket</b></th>
                             <th class="my_td"><b>Puntaje</b></th>
                             <th class="my_td"><b>Fecha</b></th>
-                            <!-- <th class="my_td"><b>Telefono</b></th> -->
-                            <!-- <th class="my_td"><b>Correo</b></th> -->
+                            <th class="my_td"><b>Establecimiento</b></th>
+
+                            <th class="my_td"><b>Jugado</b></th>
+                            <th class="my_td"><b>Verificado</b></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($data as $d): ?>
                         <tr>
                             <td class="my_td text-center border-0 py-2">
-                                <h4><b><em><?php echo $d['id'] ?></em></b></h4>
+                                <h6><b><em><?php echo $d['id']; ?></em></b></h6>
                             </td>
                             <td class="my_td text-center border-0 py-2">
-                                <h4><b><em><?php echo $d['user_name'] ?></em></b></h4>
+                                <h6><b><em><?php echo $d['user_name']; ?></em></b></h6>
                             </td>
                             <td class="my_td text-center border-0 py-2">
-                                <h4><b><em><?php echo $d['ticket'] ?></em></b></h4>
+                                <h6><b><em><?php echo $d['telephone']; ?></em></b></h6>
                             </td>
                             <td class="my_td text-center border-0 py-2">
-                                <h4><b><em><?php echo $d['score'] ?></em></b></h4>
+                                <h6><b><em><?php echo $d['email']; ?></em></b></h6>
                             </td>
                             <td class="my_td text-center border-0 py-2">
-                                <h4><b><em><?php echo $d['date'] ?></em></b></h4>
+                                <h6><b><em><?php echo $d['state'].', '.$d['city']; ?></em></b></h6>
                             </td>
-                            <!-- <td class="my_td text-center border-0 py-2">
-                                <h4><b><em><?php echo $d['telephone'] ?></em></b></h4>
+
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em>
+                                            <?php echo $d['ticket']; ?>
+                                            <a href="http://localhost/puntajes2/assets/tickets_fotos/<?php echo $d['photo']; ?>"
+                                                target="_blank"><button class="btn btn-sm bg-warning p-1"><i
+                                                        class="bi bi-eye"></i></button></a>
+                                        </em></b></h6>
                             </td>
                             <td class="my_td text-center border-0 py-2">
-                                <h4><b><em><?php echo $d['email'] ?></em></b></h4>
-                            </td> -->
+                                <h6><b><em><?php echo $d['score']; ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['date']; ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['establishment']; ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo ($d['status']==1?'Usado':'Disponible'); ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em>
+                                            <?php
+                                        switch($d['ticket_verificado']) {
+                                            case 0:?>
+                                            <span>Pendiente <button class="btn btn-sm bg-warning p-1 data-to-modal"
+                                                    data-to-update='<?php echo json_encode($d['id']); ?>'><i
+                                                        class="bi bi-pencil-square"></i></button></span>
+                                            <?php
+                                                    break;
+                                            case 1:
+                                                echo 'Validado';
+                                                break;
+                                            case 2:
+                                                echo 'Rechazado';
+                                                break;
+                                        }
+                                    ?>
+
+                                        </em></b></h6>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -116,179 +181,91 @@
 
 
     </div>
-    <!-- ALERT ------------------------------------------------------------------------------- -->
-    <!-- <div class="modal fade" id="my_alert" tabindex="-1" aria-modal="true">
-        <div class="modal-dialog modal-dialog-centered mw-900px">
-            <div class="modal-content">
-
-                <div class="modal-header"
-                    style="background-image: url('https://expertosraid.com/wp-content/uploads/2024/05/Fondo-1-scaled.jpg');">
-                    <h4 class="text-light"><b>Ticket <span id="ticket"></span> - <span id="score"></span> Puntos</b>
-                    </h4>
-                    <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal"><i
-                            class="bi bi-x-lg text-light"></i></div>
-                </div>
-
-                <div class="modal-body py-lg-10 px-lg-10">
-
-                    <h4><b>Nombre:</b> <span id="name"></span></h4>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h6><b>Email:</b> <span id="email"></span></h6>
-                        </div>
-                        <div class="col-sm-6">
-                            <h6><b>Telefono:</b> <span id="telephone"></span></h6>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h6><b>Estado:</b> <span id="state"></span></h6>
-                        </div>
-                        <div class="col-sm-6">
-                            <h6><b>Cuidad:</b> <span id="city"></span></h6>
-                        </div>
-                    </div>
-                    <h4><b>Establecimiento:</b> <span id="establishment"></span></h4>
-
-                    <div class="">
-                        <img id="photo" src="" alt="NO_IMG" class="rounded-3" style="width: 100%;object-fit: cover;">
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-    </div> -->
-    <!-- MODAL ------------------------------------------------------------------------------- -->
-    <!-- <div id="my_modal" tabindex="-1" aria-modal="true" class="row w-100 h-100">
-        <div class="modal-dialog modal-dialog-centered mw-900px">
-            <div class="modal-content">
-
-                <div class="modal-header"
-                    style="background-image: url('https://expertosraid.com/wp-content/uploads/2024/05/Fondo-1-scaled.jpg');">
-                    <h4 class="text-light"><b>Registro de Nuevo Ticket</b></h4> -->
-                    <!-- <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal"><i class="bi bi-x-lg text-light"></i></div> -->
-                        
-                <!-- </div> -->
-                <!-- ------------------------------------------------------------------------------- -->
-                <!-- <div class="modal-body py-lg-10 px-lg-10">
-                    <form action="index.php" method="POST" id="insert" enctype="multipart/form-data">
-                        <input type="hidden" name="action" value="insert">
-                        <div class="fv-row mb-10">
-                            <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                <span class="required">Nombre</span>
-                            </label>
-                            <input type="text" class="form-control form-control-sm form-control-solid" name="user_name"
-                                maxlength="32" minlength="8" required placeholder="8-32 caracteres" />
-                        </div>
-                        <div class="fv-row mb-10">
-                            <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                <span class="required">Ticket</span>
-                            </label>
-                            <input type="text" class="form-control form-control-sm form-control-solid" name="ticket"
-                                required placeholder="" />
-                        </div>
-                        <div class="row">
-                            <div class="col sm-6">
-                                <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                    <span class="required">Correo</span>
-                                </label>
-                                <input type="email" class="form-control form-control-sm form-control-solid" name="email"
-                                    required minlength="8" maxlength="32" placeholder="minimo 8 caracteres" />
-                            </div>
-                            <div class="col sm-6">
-                                <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                    <span class="required">Telefono</span>
-                                </label>
-                                <input type="tel" class="form-control form-control-sm form-control-solid"
-                                    name="telephone" required minlength="10" maxlength="10" placeholder="10 caracteres" />
-                            </div>
-                        </div>
-
-                        <div class="row mb-2">
-                            <div class="col sm-6">
-                                <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                    <span class="required">Estado</span>
-                                </label>
-                                <select name="state" required class="form-control form-control-sm form-control-solid">
-                                    <option value="Aguascalientes">Aguascalientes</option>
-                                    <option value="Baja California">Baja California</option>
-                                    <option value="Baja California Sur">Baja California Sur</option>
-                                    <option value="Campeche">Campeche</option>
-                                    <option value="Chiapas">Chiapas</option>
-                                    <option value="Chihuahua">Chihuahua</option>
-                                    <option value="CDMX">CDMX</option>
-                                    <option value="Coahuila">Coahuila</option>
-                                    <option value="Colima">Colima</option>
-                                    <option value="Durango">Durango</option>
-                                    <option value="Guanajuato">Guanajuato</option>
-                                    <option value="Guerrero">Guerrero</option>
-                                    <option value="Hidalgo">Hidalgo</option>
-                                    <option value="Jalisco">Jalisco</option>
-                                    <option value="Estado de México">Estado de México</option>
-                                    <option value="Michoacán">Michoacán</option>
-                                    <option value="Morelos">Morelos</option>
-                                    <option value="Nayarit">Nayarit</option>
-                                    <option value="Nuevo León">Nuevo León</option>
-                                    <option value="Oaxaca">Oaxaca</option>
-                                    <option value="Puebla">Puebla</option>
-                                    <option value="Querétaro">Querétaro</option>
-                                    <option value="Quintana Roo">Quintana Roo</option>
-                                    <option value="San Luis Potosí">San Luis Potosí</option>
-                                    <option value="Sinaloa">Sinaloa</option>
-                                    <option value="Sonora">Sonora</option>
-                                    <option value="Tabasco">Tabasco</option>
-                                    <option value="Tamaulipas">Tamaulipas</option>
-                                    <option value="Tlaxcala">Tlaxcala</option>
-                                    <option value="Veracruz">Veracruz</option>
-                                    <option value="Yucatán">Yucatán</option>
-                                    <option value="Zacatecas">Zacatecas</option>
-                                </select>
-                            </div>
-
-                            <div class="col sm-6">
-                                <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                    <span class="required">Cuidad</span>
-                                </label>
-                                <input type="text" class="form-control form-control-sm form-control-solid" name="city"
-                                    required minlength="4" maxlength="32" placeholder="minimo 4 caracteres" />
-                            </div>
-                        </div>
-                        <div class="fv-row mb-4">
-                            <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                <span class="required">Establecimiento</span>
-                            </label>
-                            <input type="text" class="form-control form-control-sm form-control-solid"
-                                name="establishment" required minlength="6" maxlength="32"
-                                placeholder="minimo 6 caracteres" />
-                        </div>
-
-                        <div class="fv-row mb-10 form-group  mb-4">
-                            <label class="d-flex align-items-center fs-5 fw-semibold mb-2" for="fileInput">
-                                <span class="required">Foto del ticket</span>
-                            </label>
-                            <input type="file" class="form-control-file" name="photo" id="fileInput" accept="image/*"
-                                required>
-                            <button type="button" class="btn btn-sm btn-danger d-none" id="fileClear"><i
-                                    class="bi bi-x-lg text-light"></i></button>
-                        </div>
-                        <div class="mt-3">
-                            <img id="imagePreview" src="#" alt="NO IMG" class="img-fluid d-none" style="width: 100%;object-fit: cover;">
-                        </div>
-
-                    </form>
-                </div> -->
-                <!-- ------------------------------------------------------------------------------- -->
-                <!-- <div class="modal-footer"
-                    style="background-image: url('https://expertosraid.com/wp-content/uploads/2024/05/Fondo-1-scaled.jpg');">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-warning" form="insert">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
 </body>
 
+<form action="index.php" method="POST" id="update">
+    <input type="hidden" name="id" value="0">
+    <input type="hidden" name="new" value="0">
+</form>
+
 </html>
-<script src="assets/formulario.js"></script>
+<script>
+
+$(document).ready(function() {
+    const swalWithTwoInputs = Swal.mixin({
+        input: 'text',
+        confirmButtonText: 'Siguiente &rarr;',
+        showCancelButton: false,
+        progressSteps: ['1', '2'],
+        backdrop: `rgba(0,0,123,0.4) url("https://expertosraid.com/wp-content/uploads/2024/05/Fondo-1-scaled.jpg") left top no-repeat`
+        
+    });
+    const steps = ['Usuario', 'Contraseña'];
+
+    swalWithTwoInputs.queue([{
+            title: 'Ingresa tu usuario:',
+            input: 'text',
+            inputPlaceholder: 'Escribe aquí...',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Debe ingresar su usuario!'
+                }
+            }
+        },
+        {
+            title: 'Ingresa tu contraseña:',
+            inputPlaceholder: 'Escribe aquí...',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Debe ingresar tu contraseña!'
+                }
+            }
+        }
+    ]) then((r) => {
+        if (result.value[0] == 'x' && result.value[1] == 'x') {
+            console.log('ok');
+        } else {
+            Swal.fire({
+                title: "Contraseña incorrecta",
+                showDenyButton: false,
+                showCancelButton: false
+            })
+        }
+    });
+
+    $('#miTabla').DataTable({
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+        }
+    });
+});
+const btnChange = document.querySelectorAll('.data-to-modal');
+btnChange.forEach(b => {
+    b.addEventListener('click', () => {
+        const object = b.getAttribute('data-to-update');
+        const json = JSON.parse(object);
+        const form = $('#update');
+
+        Swal.fire({
+            title: "Cambiar la verificacion del ticket?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Validar",
+            denyButtonText: "Rechazar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire("Validado", "", "success");
+                form.find('input[name="id"]').val(json);
+                form.find('input[name="new"]').val(1);
+                form.submit();
+
+            } else if (result.isDenied) {
+                Swal.fire("Cancelado", "", "info");
+                form.find('input[name="id"]').val(json);
+                form.find('input[name="new"]').val(2);
+                form.submit();
+            }
+        });
+    });
+});
+</script>

@@ -9,9 +9,7 @@ class Model
         if ($mysqli->connect_error) {
             die("Error de conexión: " . $mysqli->connect_error);
         }
-        // $sql = "SELECT * FROM programas limit 10";
-        $sql = "SELECT * FROM tbl_puntajes p
-            ORDER BY id DESC";
+        $sql = "SELECT * FROM tbl_puntajes";
 
         $result = $mysqli->query($sql);
 
@@ -122,39 +120,23 @@ class Model
         }
     }
 
-    // public function selectBy($var) {
-    //     $mysqli = conectarDB();
-    //     if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
-    //     // $sql = "SELECT * FROM programas limit 10";
-    //     $sql = "
-    //         SET @var = '".$var."';
+    public function updateVefication($id,$new)
+    {
+        $mysqli = conectarDB();
+        if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
+        $sql = "UPDATE tbl_puntajes SET
+                ticket_verificado = ".$new."
+            WHERE id=".$id;
 
-    //         SELECT * FROM tbl_puntajes p
-    //         WHERE
-    //             p.telephone = @var OR
-    //             p.user_name = @var OR
-    //             p.email = @var
-    //         ORDER BY id DESC";
-
-    //     $result = $mysqli->query($sql);
-
-    //     $datos = array();
-    //     while ($row = $result->fetch_assoc()) {$datos[] = $row;}
-
-    //     $mysqli->close();
-    //     return $datos;
-    // }
-
-
-    //     -- FILTRADO
-// SET @var = "juan 2";
-
-    // SELECT * FROM tbl_puntajes p
-// WHERE
-// 	p.telephone = @var OR
-// 	p.user_name = @var OR
-// 	p.email = @var
-// ORDER BY id DESC LIMIT 2;
+        $result = $mysqli->query($sql);
+        if ($mysqli->query($sql) == 1) {
+            echo '1';
+        } else {
+            echo '0';
+            echo '<script>console.log('.$mysqli->error.')</script>';
+        }
+        $mysqli->close();
+    }
 
 }
 ?>
