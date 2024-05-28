@@ -163,7 +163,8 @@
                                             <span>Pendiente <button class="btn btn-sm bg-warning p-1 data-to-modal"
                                                     data-to-update='<?php echo json_encode($d['id']); ?>'
                                                     data-to-link='<?php echo json_encode($d['ticket']); ?>'
-                                                    data-to-email='<?php echo json_encode($d['email']); ?>'><i
+                                                    data-to-email='<?php echo json_encode($d['email']); ?>'
+                                                    data-to-name='<?php echo json_encode($d['user_name']); ?>'><i
                                                         class="bi bi-pencil-square"></i></button></span>
                                             <?php
                                                     break;
@@ -192,6 +193,7 @@
 <form action="index.php" method="POST" id="update">
     <input type="hidden" name="id" value="0">
     <input type="hidden" name="new" value="0">
+    <input type="hidden" name="name" value="">
     <input type="hidden" name="msg" value="">
     <input type="hidden" name="ticket" value="">
     <input type="hidden" name="email" value="">
@@ -286,9 +288,6 @@ function F() {
                 showCancelButton: false,
                 backdrop: `rgba(0,0,123,0.4) url("https://expertosraid.com/wp-content/uploads/2024/05/Fondo-1-scaled.jpg") left top no-repeat`
             }).then(rr => {
-                // location.reload();
-                // window.location.href = "https://www.google.com";
-                // window.history.back();
                 F();
             });
         }
@@ -318,8 +317,19 @@ btnChange.forEach(b => {
             confirmButtonText: "Validar",
             denyButtonText: "Rechazar"
         }).then((result) => {
+            const ticket = b.getAttribute('data-to-link');
+            const ticket_ = JSON.parse(ticket);
+            const email = b.getAttribute('data-to-email');
+            const email_ = JSON.parse(email);
+            const name = b.getAttribute('data-to-name');
+            const name_ = JSON.parse(name);
+
             if (result.isConfirmed) {
                 Swal.fire("Validado", "", "success");
+                form.find('input[name="msg"]').val(result.value);
+                form.find('input[name="ticket"]').val(ticket_);
+                form.find('input[name="email"]').val(email_);
+                form.find('input[name="name"]').val(name_);
                 form.find('input[name="id"]').val(json);
                 form.find('input[name="new"]').val(1);
                 form.submit();
@@ -334,15 +344,11 @@ btnChange.forEach(b => {
                     showCancelButton: true
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const ticket = b.getAttribute('data-to-link');
-                        const ticket_ = JSON.parse(ticket);
-
-                        const email = b.getAttribute('data-to-email');
-                        const email_ = JSON.parse(email);
 
                         form.find('input[name="msg"]').val(result.value);
                         form.find('input[name="ticket"]').val(ticket_);
                         form.find('input[name="email"]').val(email_);
+                        form.find('input[name="name"]').val(name_);
                         form.find('input[name="id"]').val(json);
                         form.find('input[name="new"]').val(2);
 
