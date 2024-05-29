@@ -18,9 +18,10 @@ class Model
             ORDER BY max_score DESC 
         ";
         $datos = array();
+
         $result = $mysqli->query($sql);
 
-        if (!$result->fetch_assoc()) {
+        if ($result && $result->num_rows == 0) {
             $mysqli->close();
 
             return json_decode('[]');

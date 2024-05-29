@@ -10,7 +10,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+        </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- JQUERY -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -24,41 +24,69 @@
     <!-- MY ASSETS -->
 
     <style>
-    #myTable2_info,
-    #myTable2_paginate a,
-    #myTable2_wrapper label,
-    #myTable2_wrapper input {
-        color: #F9E94D;
-        font-weight: bolder;
-        font-size: 1.5rem;
-    }
+        #myTable2_info,
+        #myTable2_paginate a,
+        #myTable2_wrapper label,
+        #myTable2_wrapper input {
+            color: #F9E94D;
+            font-weight: bolder;
+            font-size: 1.5rem;
+        }
 
-    .my_td,
-    h4,
-    .form-control-solid,
-    .form-control-solid::placeholder,
-    #myTable2_previous,
-    #myTable2_next,
-    .dataTables_empty,
-    select {
-        background-color: transparent;
-        color: #F9E94D !important;
-    }
+        .my_td,
+        h4,
+        .form-control-solid,
+        .form-control-solid::placeholder,
+        #myTable2_previous,
+        #myTable2_next,
+        .dataTables_empty,
+        select {
+            background-color: transparent;
+            color: #F9E94D !important;
+        }
 
-    .form-control-solid:focus {
-        font-size: 1rem;
-        color: #F9E94D;
-    }
+        .form-control-solid:focus {
+            font-size: 1rem;
+            color: #F9E94D;
+        }
 
-    td {
-        background-color: transparent;
-        color: #F9E94D;
-    }
+        td {
+            background-color: transparent;
+            color: #F9E94D;
+        }
     </style>
 </head>
 
 <body style="background-color: transparent;">
     <div class="p-2">
+        <div class="row">
+            <div class="col-sm-3">
+                <a href="http://localhost/ranking_semanal/index.php?s=<?php echo $week + 1; ?>">
+                    <button class="btn btn-warning"><i class="bi bi-caret-left-fill"></i> <b>Ir una semana
+                            atras</b></button>
+                </a>
+            </div>
+            <div class="col-sm-6">
+                <h4 class="text-center"><b>
+                        <?php
+                        if ($week == 0) {
+                            echo 'Semana actual';
+                        }
+                        if ($week >= 1) {
+                            echo $week . ' Semanas atras';
+                        }
+                        ?>
+                    </b></h4>
+            </div>
+            <div class="col-sm-3">
+                <?php if ($week >= 1): ?>
+                    <a href="http://localhost/ranking_semanal/index.php?s=<?php echo $week - 1; ?>">
+                        <button class="btn btn-warning"><b>Ir una semana delante</b> <i
+                                class="bi bi-caret-right-fill"></i></button>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
         <div class="row">
 
             <div class="col-sm-12 mt-5">
@@ -72,24 +100,33 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $contador = 1; ?>
-                        <?php foreach ($data as $d): ?>
-                            <tr>
-                                <td class="my_td text-center border-0 py-2" style="background-color: transparent;color:#F9E94D;">
-                                    <h4><b><em><?php echo $contador; ?></em></b></h4>
-                                </td>
-                                <td class="my_td text-center border-0 py-2" style="background-color: transparent;color:#F9E94D;">
-                                    <h4><b><em><?php echo $d['names']; ?></em></b></h4>
-                                </td>
-                                <td class="my_td text-center border-0 py-2" style="background-color: transparent;color:#F9E94D;">
-                                    <h4><b><em><?php echo $d['nticket']; ?></em></b></h4>
-                                </td>
-                                <td class="my_td text-center border-0 py-2" style="background-color: transparent;color:#F9E94D;">
-                                    <h4><b><em><?php echo $d['max_score']; ?></em></b></h4>
-                                </td>
-                            </tr>
-                        <?php $contador++; ?>                            
-                        <?php endforeach;?>
+                        <?php if (count($data) == 0): ?>
+                            <h4 class="text-center py-4"><b>No hay registros</b></h4>
+                        <?php else: ?>
+
+                            <?php $contador = 1; ?>
+                            <?php foreach ($data as $d): ?>
+                                <tr>
+                                    <td class="my_td text-center border-0 py-2"
+                                        style="background-color: transparent;color:#F9E94D;">
+                                        <h4><b><em><?php echo $contador; ?></em></b></h4>
+                                    </td>
+                                    <td class="my_td text-center border-0 py-2"
+                                        style="background-color: transparent;color:#F9E94D;">
+                                        <h4><b><em><?php echo $d['names']; ?></em></b></h4>
+                                    </td>
+                                    <td class="my_td text-center border-0 py-2"
+                                        style="background-color: transparent;color:#F9E94D;">
+                                        <h4><b><em><?php echo $d['nticket']; ?></em></b></h4>
+                                    </td>
+                                    <td class="my_td text-center border-0 py-2"
+                                        style="background-color: transparent;color:#F9E94D;">
+                                        <h4><b><em><?php echo $d['max_score']; ?></em></b></h4>
+                                    </td>
+                                </tr>
+                                <?php $contador++; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -99,6 +136,7 @@
     </div>
 </body>
 
-
-
 </html>
+<script>
+
+</script>
