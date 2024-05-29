@@ -11,6 +11,9 @@ $model = new Model();
 $data = $model->select();
 $mail = new PHPMailer();
 
+$week_data = $model->selectBy(0);
+$week = 0;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $model->updateVefication($_POST['id'],$_POST['new']);
@@ -67,6 +70,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error al enviar el correo: {$mail->ErrorInfo}";
     }
     
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (isset($_GET['s'])) {
+        if (is_numeric($_GET['s'])) {
+            $week_data = $model->selectBy($_GET['s']);
+            $week = $_GET['s'];
+        }
+    }
 }
 
 

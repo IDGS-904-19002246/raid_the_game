@@ -34,7 +34,8 @@
     }
 
     .my_td,
-    .nav-link {
+    .nav-link,
+    h4 {
         color: #F9E94D !important;
     }
 
@@ -94,7 +95,7 @@
             </div>
         </div>
 
-        <div class="row mb-4" style="height:800px;">
+        <div class="row mb-4" style="height:700px;">
 
             <div class="col-sm-12">
                 <table id="miTabla" class="table table-dark table-striped py-4">
@@ -186,6 +187,93 @@
             </div>
         </div>
 
+        <div class="row mb-4">
+            <div class="col-sm-12">
+                <h4 class="text-center"><b><em>Ganadores de la semana</em></b></h4>
+            </div>
+            <div class="col-sm-12">
+
+                <div class="row">
+                    <div class="col-sm-3 d-flex flex-row-reverse">
+                        <a href="http://localhost/gestion/index.php?s=<?php echo $week + 1; ?>">
+                            <button class="btn btn-warning"><i class="bi bi-caret-left-fill"></i> <b>Ir una semana
+                                    atras</b></button>
+                        </a>
+                    </div>
+                    <div class="col-sm-6">
+                        <h4 class="text-center"><b>
+                                <?php
+                        if ($week == 0) {
+                            echo 'Semana actual';
+                        }
+                        if ($week >= 1) {
+                            echo $week . ' Semanas atras';
+                        }
+                        ?>
+                            </b></h4>
+                    </div>
+                    <div class="col-sm-3 d-flex flex-row">
+                        <?php if ($week >= 1): ?>
+                        <a href="http://localhost/gestion/index.php?s=<?php echo $week - 1; ?>">
+                            <button class="btn btn-warning"><b>Ir una semana delante</b> <i
+                                    class="bi bi-caret-right-fill"></i></button>
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="row" style="height:500px;">
+
+                    <div class="col-sm-12 mt-5">
+                        <table id="myTable2" class="table table-dark table-striped">
+                            <thead>
+                                <tr class="text-center">
+                                    <th class="my_td"><b>#</b></th>
+                                    <th class="my_td"><b>Nombre</b></th>
+                                    <th class="my_td"><b>Correo</b></th>
+                                    <th class="my_td"><b>Telefono</b></th>
+                                    <th class="my_td"><b>N.tickets</b></th>
+                                    <th class="my_td"><b>Score</b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (count($week_data) == 0): ?>
+                                <h4 class="text-center py-4"><b>No hay registros</b></h4>
+                                <?php else: ?>
+
+                                <?php $contador = 1; ?>
+                                <?php foreach ($week_data as $d): ?>
+                                <tr>
+                                    <td class="my_td text-center border-0 py-2">
+                                        <h4><b><em><?php echo $contador; ?></em></b></h4>
+                                    </td>
+                                    <td class="my_td text-center border-0 py-2">
+                                        <h4><b><em><?php echo $d['names']; ?></em></b></h4>
+                                    </td>
+                                    <td class="my_td text-center border-0 py-2">
+                                        <h4><b><em><?php echo $d['email']; ?></em></b></h4>
+                                    </td>
+                                    <td class="my_td text-center border-0 py-2">
+                                        <h4><b><em><?php echo $d['telephones']; ?></em></b></h4>
+                                    </td>
+                                    <td class="my_td text-center border-0 py-2">
+                                        <h4><b><em><?php echo $d['nticket']; ?></em></b></h4>
+                                    </td>
+                                    <td class="my_td text-center border-0 py-2">
+                                        <h4><b><em><?php echo $d['max_score']; ?></em></b></h4>
+                                    </td>
+
+                                </tr>
+                                <?php $contador++; ?>
+                                <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
 
     </div>
 </body>
