@@ -55,6 +55,28 @@ class Model
             }
         }
     }
+    function selectCambio($idkommo){
+        $mysqli = conectarDB();
+        if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
+        $sql = "SELECT
+                k.lead_nombre,k.fecha_asignacion
+            FROM leads_kommo_cambios k WHERE k.idkommo = $idkommo
+            ORDER BY k.id DESC LIMIT 1";
+
+        $datos = array();
+        $result = $mysqli->query($sql);
+
+        if ($result && $result->num_rows == 0) {
+            $mysqli->close();
+            return json_decode('[]');
+        }else{
+            while ($row = $result->fetch_assoc()) {
+            $datos[] = $row;
+        }
+        $mysqli->close();
+        return $datos;
+        }
+    }
     // -------------------------------------------------------------
     function insertCambios(
         $idkommo,$lead_nombre,$pipeline,
@@ -109,27 +131,51 @@ class Model
     }
     function insertTareas(
         $idkommo,$lead_nombre,$actividad,
-        $id_responsable,$fecha,$fecha_asignacion
+        $id_responsable,$fecha,$fecha_asignacion,
+        $idtipo
     ){
         $mysqli = conectarDB();
         if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
 
         $sql = "INSERT INTO leads_kommo_tareas (
             `idkommo`,`lead_nombre`,`actividad`,
-	        `id_responsable`,`fecha`,`fecha_asignacion`
+	        `id_responsable`,`fecha`,`fecha_asignacion`,
+            `idtipo`
         )VALUES(
             ".$idkommo.",
             '".$lead_nombre."',
             '".$actividad."',
 
             ".$id_responsable.",
-            '".$fecha.",'
-            '".$fecha_asignacion."'
+            '".$fecha."',
+            '".$fecha_asignacion."',
+
+            ".$idtipo."
         )";
 
         if ($mysqli->query($sql) != 1) {echo '<script>console.log('.$mysqli->error.')</script>';}
         $mysqli->close();
     }
+    // -------------------------------------------------------------
+    function insertConversaciones(
+        $idkommo,$lead_nombre,$actividad,
+	    $fecha_asignacion
+    ){
+        $mysqli = conectarDB();
+        if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
 
+        $sql = "INSERT INTO leads_kommo_conversaciones(
+            `idkommo`,`lead_nombre`,`actividad`,
+            `fecha_asignacion`
+        ) VALUES (
+            $idkommo,
+            '$lead_nombre',
+            '$actividad',
+	        '$fecha_asignacion'
+        )";
+
+        if ($mysqli->query($sql) != 1) {echo '<script>console.log('.$mysqli->error.')</script>';}
+        $mysqli->close();
+    }
 }
 ?>
