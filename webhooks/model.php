@@ -35,7 +35,13 @@ class Model
             }
 
             // ASIGNAR EL VALOR A LA CLAVE FINAL
-            $actual = $value;
+            if(substr($value, 0, 1) == '{' && substr($value, -1) == '}'){
+                $actual = json_decode($value);
+            }else{
+                $actual = $value;
+            }
+            
+            
         }
         return $data;
     }
@@ -92,7 +98,7 @@ class Model
             ".$idkommo.",
             '".$lead_nombre."',
             '".$actividad."',
-            
+
             ".$id_responsable.",
             '".$fecha."',
             '".$fecha_asignacion."'

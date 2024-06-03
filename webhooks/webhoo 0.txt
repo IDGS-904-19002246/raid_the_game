@@ -1,6 +1,6 @@
 account%5Bsubdomain%5D=auladisermx&account%5Bid%5D=32067039&account%5B_links%5D%5Bself%5D=https%3A%2F%2Fauladisermx.amocrm.com&leads%5Bupdate%5D%5B0%5D%5Bid%5D=2509444&leads%5Bupdate%5D%5B0%5D%5Bname%5D=&leads%5Bupdate%5D%5B0%5D%5Bstatus_id%5D=143&leads%5Bupdate%5D%5B0%5D%5Bold_status_id%5D=68350743&leads%5Bupdate%5D%5B0%5D%5Bprice%5D=0&leads%5Bupdate%5D%5B0%5D%5Bresponsible_user_id%5D=10471703&leads%5Bupdate%5D%5B0%5D%5Blast_modified%5D=1717169686&leads%5Bupdate%5D%5B0%5D%5Bmodified_user_id%5D=0&leads%5Bupdate%5D%5B0%5D%5Bcreated_user_id%5D=0&leads%5Bupdate%5D%5B0%5D%5Bdate_create%5D=1704829057&leads%5Bupdate%5D%5B0%5D%5Bpipeline_id%5D=7943743&leads%5Bupdate%5D%5B0%5D%5Btags%5D%5B0%5D%5Bid%5D=35046&leads%5Bupdate%5D%5B0%5D%5Btags%5D%5B0%5D%5Bname%5D=BD&leads%5Bupdate%5D%5B0%5D%5Btags%5D%5B1%5D%5Bid%5D=52946&leads%5Bupdate%5D%5B0%5D%5Btags%5D%5B1%5D%5Bname%5D=Uva&leads%5Bupdate%5D%5B0%5D%5Baccount_id%5D=32067039&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B0%5D%5Bid%5D=747664&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B0%5D%5Bname%5D=Programa&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B0%5D%5Bvalues%5D%5B0%5D%5Bvalue%5D=Diplomado+en+Excel+Avanzado&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B0%5D%5Bvalues%5D%5B0%5D%5Benum%5D=656304&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B1%5D%5Bid%5D=862832&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B1%5D%5Bname%5D=Fuente&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B1%5D%5Bvalues%5D%5B0%5D%5Bvalue%5D=ORGANIC_SEARCH&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B2%5D%5Bid%5D=862978&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B2%5D%5Bname%5D=Mensaje&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B2%5D%5Bvalues%5D%5B0%5D%5Bvalue%5D=Quisiera+saber+los+costos+del+curso+certificado&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B3%5D%5Bid%5D=926914&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B3%5D%5Bname%5D=WhatsApp+Verificado&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B3%5D%5Bvalues%5D%5B0%5D%5Bvalue%5D=FALSE&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B4%5D%5Bid%5D=747666&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B4%5D%5Bname%5D=pgr&leads%5Bupdate%5D%5B0%5D%5Bcustom_fields%5D%5B4%5D%5Bvalues%5D%5B0%5D%5Bvalue%5D=Diplomado+en+Excel+Avanzado&leads%5Bupdate%5D%5B0%5D%5Bcreated_at%5D=1704829057&leads%5Bupdate%5D%5B0%5D%5Bupdated_at%5D=1717169686
 
-
+    CAMBIOS
 leads->update
 
 id kommo  = id
@@ -11,3 +11,24 @@ id _repomsable = responsible_user_id
 fecha int = date_create
 furntr = custom_fields[]value
 
+
+
+    TAREAS BD->JSON
+id -> 
+idkommo -> element_id
+lead_nombre ->  - (ES LA de cambios)
+actividad -> text
+id_responsable -> responsible_user_id
+fecha -> created_at
+fecha_asignacion -> (ES LA de cambios)
+id tipo = task_type
+
+
+
+    NOTAS BD->JSON
+idkommo = element_id
+lead_nombre = -  (ES LA de cambios)
+actividad = text
+id_responsable = created_by
+fecha = created_at
+fecha_asignacion =  (ES LA de cambios)

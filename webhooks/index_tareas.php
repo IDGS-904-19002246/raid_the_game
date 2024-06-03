@@ -4,7 +4,7 @@ $model = new Model();
 
 // $archivo = 'web_notas.txt';
 
-$json = $model->ToJson(file_get_contents('web_notas.txt'));
+$json = $model->ToJson(file_get_contents('web_tareas.txt'));
 echo json_encode($json);
 // $leads = $json['leads']['note'][0];
 

@@ -4,7 +4,8 @@ $model = new Model();
 
 // $archivo = 'webhoo.txt';
 
-// $json = $model->ToJson(file_get_contents('webhoo.txt'));
+$json = $model->ToJson(file_get_contents('web_cambios.txt'));
+echo json_encode($json);
 // $leads = $json['leads']['update'][0];
 
 // echo '<br> idkommo: '.$leads['id'];
