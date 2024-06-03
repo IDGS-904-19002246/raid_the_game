@@ -5,19 +5,18 @@ $model = new Model();
 $model_api = new ApiModel();
 
 
-// $json = $model->ToJson(file_get_contents('web_cambios.txt'));
-// echo json_encode($json);
+$json = $model->ToJson(file_get_contents('web_cambios.txt'));
+echo json_encode($json);
 // 2686084 
 
-$contacto = $model_api->getContact(2234590);
-echo $contacto['id']. '<br>';
-echo $contacto['name']. '<br>';
-echo $model->getValueFromItem($contacto['custom_fields_values'],'field_name','Email')['values'][0]['value'] ?? '- - -';
-echo '<br>';
-echo $model->getValueFromItem($contacto['custom_fields_values'],'field_name','Phone')['values'][0]['value'] ?? '- - -';
+// $contacto = $model_api->getContact(2234590);
+// echo $contacto['id']. '<br>';
+// echo $contacto['name']. '<br>';
+// echo $model->getValueFromItem($contacto['custom_fields_values'],'field_name','Email')['values'][0]['value'] ?? '- - -';
+// echo '<br>';
+// echo $model->getValueFromItem($contacto['custom_fields_values'],'field_name','Phone')['values'][0]['value'] ?? '- - -';
 
-buena, consumo apis 
-mala, en el leads parece que no viene el id del contacto o es en otra url
+
 
 
 
