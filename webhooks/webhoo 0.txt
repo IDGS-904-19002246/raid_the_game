@@ -8,7 +8,8 @@ lead_nombre = name
 pipeline = pipe line id
 etapa = status id
 id _repomsable = responsible_user_id
-fecha int = date_create
+fecha int = date_create,
+    hoy
 furntr = custom_fields[]value
 
 

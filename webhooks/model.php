@@ -81,7 +81,9 @@ class Model
     function insertCambios(
         $idkommo,$lead_nombre,$pipeline,
         $etapa,$id_responsable,$fecha,
-        $fuente,$fecha_asignacion
+        $fuente,$fecha_asignacion,
+
+        $id_contacto,$contacto_nombre,$correo,$telefono,
     ){
         $mysqli = conectarDB();
         if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
@@ -89,7 +91,9 @@ class Model
         $sql = "INSERT INTO leads_kommo_cambios (
             `idkommo`,`lead_nombre`,`pipeline`,
             `etapa`,`id_responsable`,`fecha`,
-            `fuente`,`fecha_asignacion`
+            `fuente`,`fecha_asignacion`,
+
+            `id_contacto`,`contacto_nombre`,`correo`,`telefono`
         )VALUES(
             ".$idkommo.",
             '".$lead_nombre."',
@@ -100,7 +104,12 @@ class Model
             '".$fecha."',
 
             '".$fuente."',
-            '".$fecha_asignacion."'
+            '".$fecha_asignacion."',
+
+            ".$id_contacto.",
+            '".$contacto_nombre."',
+            '".$correo."',
+            '".$telefono."'
         )";
 
         if ($mysqli->query($sql) != 1) {echo '<script>console.log('.$mysqli->error.')</script>';}
@@ -108,39 +117,18 @@ class Model
     }
     function insertNotas(
         $idkommo,$lead_nombre,$actividad,
-        $id_responsable,$fecha,$fecha_asignacion
+        $id_responsable,$fecha,$fecha_asignacion,
+
+        $id_contacto,$contacto_nombre,$correo,$telefono,
     ){
         $mysqli = conectarDB();
         if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
 
         $sql = "INSERT INTO leads_kommo_notas (
             `idkommo`,`lead_nombre`,`actividad`,
-            `id_responsable`,`fecha`,`fecha_asignacion`
-        )VALUES(
-            ".$idkommo.",
-            '".$lead_nombre."',
-            '".$actividad."',
+            `id_responsable`,`fecha`,`fecha_asignacion`,
 
-            ".$id_responsable.",
-            '".$fecha."',
-            '".$fecha_asignacion."'
-        )";
-
-        if ($mysqli->query($sql) != 1) {echo '<script>console.log('.$mysqli->error.')</script>';}
-        $mysqli->close();
-    }
-    function insertTareas(
-        $idkommo,$lead_nombre,$actividad,
-        $id_responsable,$fecha,$fecha_asignacion,
-        $idtipo
-    ){
-        $mysqli = conectarDB();
-        if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
-
-        $sql = "INSERT INTO leads_kommo_tareas (
-            `idkommo`,`lead_nombre`,`actividad`,
-	        `id_responsable`,`fecha`,`fecha_asignacion`,
-            `idtipo`
+            `id_contacto`,`contacto_nombre`,`correo`,`telefono`
         )VALUES(
             ".$idkommo.",
             '".$lead_nombre."',
@@ -150,7 +138,46 @@ class Model
             '".$fecha."',
             '".$fecha_asignacion."',
 
-            ".$idtipo."
+            ".$id_contacto.",
+            '".$contacto_nombre."',
+            '".$correo."',
+            '".$telefono."'
+        )";
+
+        if ($mysqli->query($sql) != 1) {echo '<script>console.log('.$mysqli->error.')</script>';}
+        $mysqli->close();
+    }
+    function insertTareas(
+        $idkommo,$lead_nombre,$actividad,
+        $id_responsable,$fecha,$fecha_asignacion,
+        $idtipo,
+
+        $id_contacto,$contacto_nombre,$correo,$telefono,
+    ){
+        $mysqli = conectarDB();
+        if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
+
+        $sql = "INSERT INTO leads_kommo_tareas (
+            `idkommo`,`lead_nombre`,`actividad`,
+	        `id_responsable`,`fecha`,`fecha_asignacion`,
+            `idtipo`,
+
+            `id_contacto`,`contacto_nombre`,`correo`,`telefono`
+        )VALUES(
+            ".$idkommo.",
+            '".$lead_nombre."',
+            '".$actividad."',
+
+            ".$id_responsable.",
+            '".$fecha."',
+            '".$fecha_asignacion."',
+
+            ".$idtipo.",
+
+            ".$id_contacto.",
+            '".$contacto_nombre."',
+            '".$correo."',
+            '".$telefono."'
         )";
 
         if ($mysqli->query($sql) != 1) {echo '<script>console.log('.$mysqli->error.')</script>';}
