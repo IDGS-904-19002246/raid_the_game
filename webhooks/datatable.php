@@ -48,9 +48,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <!-- CHART - canvasjs.com -->
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+    <style>
+        body{
+            font-family: Arial;
+            font-size: 12px;
+        }
+        .MyTr.odd td {
+            background-color: #EEF3FB !important;
+        }
+
+        .MyTr.even td {
+            background-color: #FFFFFF !important;
+        }
+
+        .MyTh {
+            border: #3e2b0e solid 1px;
+            background-color: #3e2b0e !important;
+            color: white !important;
+            /* background-color: #C1D4F1 !important; */
+        }
+
+        table.dataTable thead .sorting {
+            filter: invert(100%) !important;
+        }
+
+        .table td {
+            box-shadow: none;
+            border: #C1D4F1 solid 1px;
+        }
+    </style>
 </head>
 
 <body>
+
+    <?php if ($mysqli->connect_error): ?>
+        <tr class="odd">
+            <td valign="top" colspan="8" class="dataTables_empty">Error de conexión</td>
+        </tr>
+    <?php else:
+        $sql = "SELECT
+            c.idkommo,
+            c.lead_nombre,c.contacto_nombre,
+            c.id_responsable,
+            json_arrayagg( DISTINCT (SELECT e.etapa FROM leads_kommo_embudos_etapas e WHERE e.id_etapa = c.etapa) ) etapa,
+            (SELECT COUNT(*) FROM leads_kommo_cambios c2 WHERE c2.idkommo = c.idkommo AND c2.fecha LIKE CONCAT('{$today}','%')) cambios,
+            (SELECT COUNT(*) FROM leads_kommo_tareas t WHERE t.idkommo = c.idkommo AND t.fecha LIKE CONCAT('{$today}','%')) tareas,
+            (SELECT COUNT(*) FROM leads_kommo_notas n WHERE n.idkommo = c.idkommo AND n.fecha LIKE CONCAT('{$today}','%')) notas,
+            (SELECT COUNT(*) FROM leads_zadarma_llamadas l WHERE
+                REPLACE(l.destination,'+','') = REPLACE(c.telefono, '+','') AND
+                l.call_date like CONCAT('{$today}','%') AND l.disposition = 'answered' AND l.duration >=15
+                ) llamadas
+
+            FROM leads_kommo_cambios c
+            WHERE c.fecha LIKE CONCAT('{$today}','%')
+            GROUP BY c.idkommo";
+
+        $result = $mysqli->query($sql);
+        if ($result):
+            while ($row = $result->fetch_assoc()):
+                $result_to_chart[] = $row; ?>
+                
+            <?php endwhile; ?>
+        <?php endif; ?>
+    <?php endif; ?>
 
     <div class="p-4">
         <form class="row" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
@@ -90,71 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <div class="row p-4 w-100">
-        <div class="col-sm-9 p-4 overflow-auto">
-            <table id="MyTable" class="table table-dark table-striped py-4 overflow-auto">
-                <thead>
-                    <tr class="text-center">
-                        <th><b>No.</b></th>
-                        <th><b>Lead</b></th>
-                        <th><b>Contacto</b></th>
-                        <th><b>Etapa</b></th>
-
-                        <th><b>Cambios</b></th>
-                        <th><b>Tareas</b></th>
-                        <th><b>Notas</b></th>
-                        <th><b>Llamadas</b></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- --------------------------------------------------------------------------------------------------------- -->
-                    <?php if ($mysqli->connect_error): ?>
-                        <h4>Error de conexión </h4>
-                    <?php else:
-                        $sql = "SELECT
-                            c.idkommo,
-                            c.lead_nombre,c.contacto_nombre,
-                            c.id_responsable,
-                            json_arrayagg( DISTINCT (SELECT e.etapa FROM leads_kommo_embudos_etapas e WHERE e.id_etapa = c.etapa) ) etapa,
-                            (SELECT COUNT(*) FROM leads_kommo_cambios c2 WHERE c2.idkommo = c.idkommo AND c2.fecha LIKE CONCAT('{$today}','%')) cambios,
-                            (SELECT COUNT(*) FROM leads_kommo_tareas t WHERE t.idkommo = c.idkommo AND t.fecha LIKE CONCAT('{$today}','%')) tareas,
-                            (SELECT COUNT(*) FROM leads_kommo_notas n WHERE n.idkommo = c.idkommo AND n.fecha LIKE CONCAT('{$today}','%')) notas,
-                            (SELECT COUNT(*) FROM leads_zadarma_llamadas l WHERE
-                                REPLACE(l.destination,'+','') = REPLACE(c.telefono, '+','') AND
-                                l.call_date like CONCAT('{$today}','%') AND l.disposition = 'answered' AND l.duration >=15
-                                ) llamadas
-
-                            FROM leads_kommo_cambios c
-                            WHERE c.fecha LIKE CONCAT('{$today}','%')
-                            GROUP BY c.idkommo";
-
-                        $result = $mysqli->query($sql);
-                        if ($result):
-                            while ($row = $result->fetch_assoc()):
-                                $result_to_chart[] = $row; ?>
-                                <tr>
-                                    <td class="text-center"><?php echo $row['idkommo']; ?></td>
-                                    <td class="text-center"><?php echo $row['lead_nombre']; ?></td>
-                                    <td class="text-center"><?php echo $row['contacto_nombre']; ?></td>
-                                    <td class="text-center"><?php
-                                    $R = json_decode($row['etapa']);
-                                    foreach ($R as $r) {
-                                        echo $r;
-                                    }
-                                    ?></td>
-                                    <td class="text-center"><?php echo $row['cambios']; ?></td>
-                                    <td class="text-center"><?php echo $row['tareas']; ?></td>
-                                    <td class="text-center"><?php echo $row['notas']; ?></td>
-                                    <td class="text-center"><?php echo $row['llamadas']; ?></td>
-                                </tr>
-                            <?php endwhile; ?>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                    <!-- --------------------------------------------------------------------------------------------------------- -->
-                </tbody>
-
-            </table>
-        </div>
-
+        <h4 class="text-center">KPIS</h4>
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (isset($_POST['MyAsesor']) && !is_null($result_to_chart)) {
@@ -177,22 +173,113 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
         ?>
-        <!-- ?php echo json_encode($dataPoints);?> -->
-        <div class="col-sm-3 p-4">
-            <h4>Datos del asesor</h4>
+        <div class="col-sm-6">
             <div class="py-4">
-                <table id="MyTable2" class="table table-dark table-striped">
+                <table id="MyTable2" class="table table-striped">
+                    <thead class="d-none">
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <?php foreach ($dataPoints as $data): ?>
-                            <tr>
+                            <tr class="MyTr">
                                 <td class="text-center"><?php echo $data['label']; ?></td>
-                                <td class="text-center"><b><?php echo $data['y']; ?></b></td>
+                                <td class="text-center"><?php echo $data['y']; ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="col-sm-6">
             <div id="chartContainer" style="height:250px;"></div>
+        </div>
+    </div>
+
+    <div class="row p-4 w-100">
+        <div class="col-sm-12 p-4 overflow-auto">
+            <table id="MyTable" class="table table-striped py-4 overflow-auto">
+                <thead>
+                    <tr class="text-center">
+                        <th class="MyTh">No.</th>
+                        <th class="MyTh">Lead</th>
+                        <th class="MyTh">Contacto</th>
+                        <th class="MyTh">Etapa</th>
+                        <th class="MyTh">Cambios</th>
+                        <th class="MyTh">Tareas</th>
+                        <th class="MyTh">Notas</th>
+                        <th class="MyTh">Llamadas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- --------------------------------------------------------------------------------------------------------- -->
+                    <?php foreach ($result_to_chart as $row): ?>
+                        <tr class="MyTr">
+                            <td class="text-center"><?php echo $row['idkommo']; ?></td>
+                            <td class="text-center"><?php echo $row['lead_nombre']; ?></td>
+                            <td class="text-center"><?php echo $row['contacto_nombre']; ?></td>
+                            <td class="text-center"><?php
+                            $R = json_decode($row['etapa']);
+                            echo end($R) != 'null' ? end($R):'';
+                            ?></td>
+                            <td class="text-center"><?php echo $row['cambios']; ?></td>
+                            <td class="text-center"><?php echo $row['tareas']; ?></td>
+                            <td class="text-center"><?php echo $row['notas']; ?></td>
+                            <td class="text-center"><?php echo $row['llamadas']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <!-- --------------------------------------------------------------------------------------------------------- -->
+
+                    <!-- ?php if ($mysqli->connect_error): ?>
+                        <tr class="odd">
+                            <td valign="top" colspan="8" class="dataTables_empty">Error de conexión</td>
+                        </tr>
+                    ?php else:
+                        $sql = "SELECT
+                            c.idkommo,
+                            c.lead_nombre,c.contacto_nombre,
+                            c.id_responsable,
+                            json_arrayagg( DISTINCT (SELECT e.etapa FROM leads_kommo_embudos_etapas e WHERE e.id_etapa = c.etapa) ) etapa,
+                            (SELECT COUNT(*) FROM leads_kommo_cambios c2 WHERE c2.idkommo = c.idkommo AND c2.fecha LIKE CONCAT('{$today}','%')) cambios,
+                            (SELECT COUNT(*) FROM leads_kommo_tareas t WHERE t.idkommo = c.idkommo AND t.fecha LIKE CONCAT('{$today}','%')) tareas,
+                            (SELECT COUNT(*) FROM leads_kommo_notas n WHERE n.idkommo = c.idkommo AND n.fecha LIKE CONCAT('{$today}','%')) notas,
+                            (SELECT COUNT(*) FROM leads_zadarma_llamadas l WHERE
+                                REPLACE(l.destination,'+','') = REPLACE(c.telefono, '+','') AND
+                                l.call_date like CONCAT('{$today}','%') AND l.disposition = 'answered' AND l.duration >=15
+                                ) llamadas
+
+                            FROM leads_kommo_cambios c
+                            WHERE c.fecha LIKE CONCAT('{$today}','%')
+                            GROUP BY c.idkommo";
+
+                        $result = $mysqli->query($sql);
+                        if ($result):
+                            while ($row = $result->fetch_assoc()):
+                                $result_to_chart[] = $row; ?>
+                                <tr class="MyTr">
+                                    <td class="text-center">?php echo $row['idkommo']; ?></td>
+                                    <td class="text-center">?php echo $row['lead_nombre']; ?></td>
+                                    <td class="text-center">?php echo $row['contacto_nombre']; ?></td>
+                                    <td class="text-center">?php
+                                    $R = json_decode($row['etapa']);
+                                    foreach ($R as $r) {
+                                        echo $r;
+                                    }
+                                    ?></td>
+                                    <td class="text-center">?php echo $row['cambios']; ?></td>
+                                    <td class="text-center">?php echo $row['tareas']; ?></td>
+                                    <td class="text-center">?php echo $row['notas']; ?></td>
+                                    <td class="text-center">?php echo $row['llamadas']; ?></td>
+                                </tr>
+                            ?php endwhile; ?>
+                        ?php endif; ?>
+                    ?php endif; ?> -->
+                    <!-- --------------------------------------------------------------------------------------------------------- -->
+                </tbody>
+
+            </table>
         </div>
     </div>
 
@@ -204,14 +291,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $(document).ready(function () {
         $('#MyTable').DataTable({
             "language": { "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" },
+            layout: {
+                topStart: {
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            text: '<i class="fa fa-file-pdf-o"></i>',
+                            titleAttr: 'PDF'
+                        }
+                    ]
+                }
+            }
             // searching: false,paging: false,info: false
         });
+        $('#MyTable2').DataTable({ searching: false, paging: false, info: false, dom: 't' });
     });
     window.onload = function () {
         var chart = new CanvasJS.Chart("chartContainer", {
             animationEnabled: true,
             exportEnabled: true,
-            theme: "dark2", // "light1", "light2", "dark1", "dark2"
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
             data: [{
                 type: "column",
                 indexLabel: "{y}",
