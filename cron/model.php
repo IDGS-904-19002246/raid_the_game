@@ -33,18 +33,15 @@ class ModelCron
         $mysqli = conectarDB("74.208.39.15", "adcontrol_kommo_leads", "1dz0u3K%0", "adcontrol_kommo_leads");
         if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
 
-        $sql = "";
-
-        $datos = array();
+        $sql = "SELECT * FROM leads_kommo_cron cr ORDER BY cr.idorden ASC LIMIT 1";
         $result = $mysqli->query($sql);
 
         if ($result && $result->num_rows == 0) {
             $mysqli->close();
             return json_decode('[]');
         }else{
-            while ($row = $result->fetch_assoc()) {$datos[] = $row;}
             $mysqli->close();
-            return $datos;
+            return json_encode($result->fetch_assoc());
         }
     }
     // -------------------------------------------------------------
