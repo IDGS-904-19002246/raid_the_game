@@ -8,9 +8,8 @@ date_default_timezone_set('America/Mexico_City');
 
 // $json = $model->ToJson(file_get_contents('web_cambios.txt'));
 // $leads = $json['leads']['update'][0];
+// echo json_encode($json);
 
-
-// // echo json_encode($json);
 // $contacts = $model_api->getLeads($leads['id']);
 
 // $contact = array('id'=>null,'name'=>null,'email'=>null,'phone'=>null);
