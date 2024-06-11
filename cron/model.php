@@ -9,9 +9,12 @@ class ModelCron
         $sql = "SELECT 
                 p.idKommo,
                 p.pnombre,
-                p.asignacionDiaria
+                p.asignacionDiaria,
+                p.nombreKommo,
+                p.idUsuarioKommo
+
             FROM dwork_personal p
-            WHERE p.idKommo IS NOT NULL LIMIT 2";
+            WHERE p.idKommo IS NOT NULL AND p.inactivo = 0";
 
         $datos = array();
         $result = $mysqli->query($sql);
@@ -46,6 +49,27 @@ class ModelCron
             return $datos;
         }
     }
+    function selectPersonalCount($idUser,$today){
+        $mysqli = conectarDB();
+        if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
+
+        $sql = "SELECT
+            COUNT(*) total
+            FROM leads_kommo_cron c
+            WHERE c.fecha_asignado = '{$today}' AND c.idKommoResponsable = {$idUser}";
+
+        $datos = array();
+        $result = $mysqli->query($sql);
+
+        if ($result && $result->num_rows == 0) {
+            $mysqli->close();
+            return json_decode('[]');
+        }else{
+            while ($row = $result->fetch_assoc()) {$datos[] = $row;}
+            $mysqli->close();
+            return $datos;
+        }
+    }
     function selectCron(){
         $mysqli = conectarDB();
         if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
@@ -64,12 +88,14 @@ class ModelCron
             return $data;
         }
     }
-    function updateCron($id, $fecha){
+    // ----------------------------------------------------------------------
+    function updateCron($id, $fecha, $idResponsable){
         $mysqli = conectarDB();
         if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
         $sql = "UPDATE leads_kommo_cron cr SET
             cr.asignado = 1,
-            cr.fecha_asignado = '".$fecha."'
+            cr.fecha_asignado = '".$fecha."',
+            cr.idKommoResponsable = ".$idResponsable."
 
             WHERE cr.id = ".$id;
         
