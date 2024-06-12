@@ -5,7 +5,8 @@ date_default_timezone_set('America/Mexico_City');
 
 //SUMA UNA DIA
 $hoy0 = date('Y-m-d');
-$hoy = strtotime($hoy0 . "+1 day");
+// $hoy = strtotime($hoy0."+1 day");
+$hoy = strtotime($hoy0);
 
 $personal_list = $ModelCron->selectPersonal();
 $suma = $ModelCron->selectPersonalSum()[0]['total'];
@@ -36,7 +37,7 @@ for ($i = 0; $i < count($personal_list); $i++) {
                     "field_id": 936898,
                     "field_name": "Fecha de inicio",
                     "field_type": "date",
-                    "values": [{"value": ' . strtotime($cron[0]['fecha_inicio'] . "+1 day") . '}]
+                    "values": [{"value": ' . strtotime($cron[0]['fecha_inicio']) . '}]
                 },
                 {
                     "field_id": 936900,
