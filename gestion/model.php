@@ -1,5 +1,5 @@
 <?php
-include '../database.php';
+include '../../database.php';
 class Model
 {
 
@@ -9,7 +9,7 @@ class Model
         if ($mysqli->connect_error) {
             die("Error de conexión: " . $mysqli->connect_error);
         }
-        $sql = "SELECT * FROM tbl_puntajes";
+        $sql = "SELECT * FROM d0_tbl_puntajes";
 
         $result = $mysqli->query($sql);
 
@@ -32,8 +32,8 @@ class Model
             p.email,
             SUM(p.score) AS 'max_score'
             
-            FROM tbl_puntajes p
-            WHERE WEEK(p.date) = WEEK(CURDATE()) - '".$var."'
+            FROM d0_tbl_puntajes p
+            WHERE p.date BETWEEN ".$var."
             
             GROUP BY p.email
             ORDER BY max_score DESC 
@@ -60,7 +60,7 @@ class Model
     {
         $mysqli = conectarDB();
         if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
-        $sql = "UPDATE tbl_puntajes SET
+        $sql = "UPDATE d0_tbl_puntajes SET
                 ticket_verificado = ".$new."
             WHERE id=".$id;
 

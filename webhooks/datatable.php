@@ -49,10 +49,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- CHART - canvasjs.com -->
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
     <style>
-        body{
+        body {
             font-family: Arial;
             font-size: 12px;
         }
+
         .MyTr.odd td {
             background-color: #EEF3FB !important;
         }
@@ -65,6 +66,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border: #3e2b0e solid 1px;
             background-color: #3e2b0e !important;
             color: white !important;
+            /* background-color: #C1D4F1 !important; */
+        }
+        .MyTh2 {
+            border: #3e2b0e solid 1px;
+            background-color: #c1d4f1 !important;
             /* background-color: #C1D4F1 !important; */
         }
 
@@ -107,13 +113,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result):
             while ($row = $result->fetch_assoc()):
                 $result_to_chart[] = $row; ?>
-                
+
             <?php endwhile; ?>
         <?php endif; ?>
     <?php endif; ?>
 
     <div class="p-4">
-        <form class="row" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+        <h4 class="border border-dark text-center m-0">
+            <div class="border border-dark">FORMATO PLAN DE TRABAJO DIARIO</div>
+        </h4>
+        <div class="border border-dark w-100">
+            <form class="row w-100 m-0" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+
+                <div class="col-sm-2 border border-dark p-1">
+                    <input class="form-control form-control-sm bg-light" type="text" value="ASESOR:" readonly disabled>
+                </div>
+                <div class="col-sm-5 border border-dark p-1">
+                    <select class="form-control form-control-sm" aria-describedby="MyAsesorHelp" id="MyAsesor"
+                        name="MyAsesor">
+                        <option value="0" select>Ninguno</option>
+                        <?php if ($mysqlis->connect_error): ?>
+                            <h4>Error de conexión </h4>
+                        <?php else:
+                            $sql2 = "SELECT p.idKommo, p.pnombre from dwork_personal p WHERE p.dip=4 AND p.inactivo=0";
+                            $result2 = $mysqlis->query($sql2);
+                            if ($result2):
+                                while ($row2 = $result2->fetch_assoc()): ?>
+                                    <option value="<?php echo $row2['idKommo']; ?>"><?php echo $row2['pnombre']; ?></option>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+                <div class="col-sm-2 border border-dark p-1">
+                    <input class="form-control form-control-sm bg-light" type="text" value="FECHA REVISION:" readonly disabled>
+                </div>
+                <div class="col-sm-2 border border-dark p-1">
+                    <input type="date" class="form-control form-control-sm" aria-describedby="DateHelp" id="MyDate" name="MyDate" value="<?php echo $today; ?>" required>
+                </div>
+                <div class="col-sm-1 border border-dark p-1">
+                    <div class="align-self-center text-center">
+                        <button type="submit" class="btn btn-sm btn-primary w-75">Ir al dia</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- <form class="row " method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
             <div class="col-sm-5 px-4 py-2">
                 <div class="form-group">
                     <label for="MyDate">Resultados de Asignación del Dia</label>
@@ -146,11 +193,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="col-sm-2 px-4 py-2 align-self-center text-center">
                 <button type="submit" class="btn btn-sm btn-primary w-75">Ir al dia</button>
             </div>
-        </form>
+        </form> -->
     </div>
 
     <div class="row p-4 w-100">
-        <h4 class="text-center">KPIS</h4>
+        <!-- <h4 class="text-center">KPIS</h4> -->
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (isset($_POST['MyAsesor']) && !is_null($result_to_chart)) {
@@ -175,11 +222,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ?>
         <div class="col-sm-6">
             <div class="py-4">
-                <table id="MyTable2" class="table table-striped">
-                    <thead class="d-none">
+                <table id="MyTable2" class="table">
+                    <thead>
                         <tr>
-                            <th></th>
-                            <th></th>
+                            <th class="text-center MyTh2" colspan="2">GLOBALES</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -222,7 +268,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <td class="text-center"><?php echo $row['contacto_nombre']; ?></td>
                             <td class="text-center"><?php
                             $R = json_decode($row['etapa']);
-                            echo end($R) != 'null' ? end($R):'';
+                            echo end($R) != 'null' ? end($R) : '';
                             ?></td>
                             <td class="text-center"><?php echo $row['cambios']; ?></td>
                             <td class="text-center"><?php echo $row['tareas']; ?></td>
@@ -230,6 +276,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <td class="text-center"><?php echo $row['llamadas']; ?></td>
                         </tr>
                     <?php endforeach; ?>
+                    <br>
+
                     <!-- --------------------------------------------------------------------------------------------------------- -->
 
                     <!-- ?php if ($mysqli->connect_error): ?>
@@ -278,13 +326,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?php endif; ?> -->
                     <!-- --------------------------------------------------------------------------------------------------------- -->
                 </tbody>
-
+                <tfoot>
+                    <tr class="mt-5">
+                        <th colspan="4" style="text-align:right">Conteo: </th>
+                        <td class="text-center">0</td>
+                        <td class="text-center">0</td>
+                        <td class="text-center">4</td>
+                        <td class="text-center">4</td>
+                    </tr>
+                </tfoot>
             </table>
+
         </div>
     </div>
-
-
+    <div class="row p-4">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4 pl-4">
+            <div class="bg-dark pt-1"></div>
+            <span class="m-2" style="font-size: .875rem;">FIRMA ASESOR</span>
+        </div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-4">
+            <div class="bg-dark pt-1"></div>
+            <span class="m-2" style="font-size: .875rem;">FIRMA SUPERVISOR</span>
+        </div>
+        <div class="col-sm-1"></div>
     </div>
+
 </body>
 
 <script>
@@ -301,6 +369,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                     ]
                 }
+            },
+            footerCallback: function (row, data, start, end, display) {
+                let api = this.api();
+
+                let intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
+
+                changes = api.column(4, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+                tasks = api.column(5, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+                notes = api.column(6, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+                calls = api.column(7, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+
+                api.column(4).footer().innerHTML = changes;
+                api.column(5).footer().innerHTML = tasks;
+                api.column(6).footer().innerHTML = notes;
+                api.column(7).footer().innerHTML = calls;
             }
             // searching: false,paging: false,info: false
         });

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyTitle</title>
+    <title>Expertos Raid - Gestión</title>
     <!-- BOOTSTRAP 5-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -16,6 +16,11 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+
     <!-- SWEET ALERT -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -34,8 +39,7 @@
     }
 
     .my_td,
-    .nav-link,
-    h4 {
+    .nav-link,h4.text-center, #miTabla_next,#miTabla_previous, #miTabla_wrapper .paginate_button:not(.current){
         color: #F9E94D !important;
     }
 
@@ -47,7 +51,7 @@
         background-image: url("https://expertosraid.com/wp-content/uploads/2024/05/Fondo_raid_royale_1.png");
         background-position: 0px -1px;
         background-repeat: no-repeat;
-        background-size: cover;
+        /*background-size: cover;*/
         /* https://expertosraid.com/wp-content/uploads/2024/05/Fondo-1-scaled.jpg */
     }
 
@@ -59,11 +63,23 @@
         background-repeat: repeat-y;
         background-size: auto;
     }
+    @media only screen and (max-width: 600px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
+.dtr-control, .sorting_1{
+    background-color: #212529  !important;
+}
+.my_logout:hover {
+      cursor: pointer;
+    }
+
     </style>
 </head>
 
-<body class="my_bg2">
-    <div class="container">
+<body class="my_bg2" onload="islogin()">
+    <div class="container ">
         <div class="">
 
         </div>
@@ -72,14 +88,13 @@
         <div class="row p-4">
             <div class="col-sm-4">
                 <img src="https://expertosraid.com/wp-content/uploads/2024/05/Recurso-1.png" alt=""
-                    class="w-75 float-end">
+                    class="w-75 float-lg-end">
             </div>
             <div class="col-sm-8">
                 <nav class="navbar navbar-expand-lg navbar-light justify-content-end">
                     <ul class="navbar-nav">
                         <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
-                                href="https://expertosraid.com/#como-participar"><b><em>Cómo participar</em></b></a>
-                        </li>
+                                href="https://expertosraid.com/#como-participar"><b><em>Cómo participar</em></b></a></li>
                         <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
                                 href="https://expertosraid.com/#premios"><b><em>Premios</em></b></a></li>
                         <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
@@ -90,30 +105,31 @@
                                 href="https://expertosraid.com/#ganadores"><b><em>Ganadores</em></b></a></li>
                         <li class="nav-item px-1"><a class="nav-link text-uppercase text-warning"
                                 href="https://expertosraid.com/#contacto"><b><em>Contacto</em></b></a></li>
+                        <li class="nav-item px-1 my_logout" onclick="logout();"><div class="nav-link text-uppercase text-warning"><b><em>Serrar sesión</em></b></div></li>
                     </ul>
                 </nav>
             </div>
         </div>
 
-        <div class="row mb-4" style="height:700px;">
+        <div class="row mb-4" style="min-height:700px;">
 
             <div class="col-sm-12">
-                <table id="miTabla" class="table table-dark table-striped py-4">
+                <table id="miTabla" class="table table-dark table-striped py-4 display responsive" style="width:100%;">
                     <thead>
                         <tr class="text-center">
                             <th class="my_td"><b>#</b></th>
+                            <th class="my_td"><b>Verificado</b></th>
                             <th class="my_td"><b>Nombre</b></th>
-                            <th class="my_td"><b>Telefono</b></th>
                             <th class="my_td"><b>Correo</b></th>
-                            <th class="my_td"><b>Cuidad</b></th>
-
-                            <th class="my_td"><b>Ticket</b></th>
+                            <th class="my_td"><b>N.Ticket</b></th>
                             <th class="my_td"><b>Puntaje</b></th>
+                            <th class="my_td"><b>Jugado</b></th>
+                            
+                            <th class="my_td"><b>Telefono</b></th>
+                            <th class="my_td"><b>Cuidad</b></th>
                             <th class="my_td"><b>Fecha</b></th>
                             <th class="my_td"><b>Establecimiento</b></th>
-
-                            <th class="my_td"><b>Jugado</b></th>
-                            <th class="my_td"><b>Verificado</b></th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -121,40 +137,6 @@
                         <tr>
                             <td class="my_td text-center border-0 py-2">
                                 <h6><b><em><?php echo $d['id']; ?></em></b></h6>
-                            </td>
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em><?php echo $d['user_name']; ?></em></b></h6>
-                            </td>
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em><?php echo $d['telephone']; ?></em></b></h6>
-                            </td>
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em><?php echo $d['email']; ?></em></b></h6>
-                            </td>
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em><?php echo $d['state'].', '.$d['city']; ?></em></b></h6>
-                            </td>
-
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em>
-                                            <?php echo $d['ticket']; ?>
-                                            <button class="btn btn-sm bg-warning p-1"><i class="bi bi-eye data-to-alert"
-                                                    data-bs-toggle="modal" data-bs-target="#my_alert"
-                                                    data-to-alert='<?php echo json_encode($d); ?>'></i></button>
-
-                                        </em></b></h6>
-                            </td>
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em><?php echo $d['score']; ?></em></b></h6>
-                            </td>
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em><?php echo $d['date']; ?></em></b></h6>
-                            </td>
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em><?php echo $d['establishment']; ?></em></b></h6>
-                            </td>
-                            <td class="my_td text-center border-0 py-2">
-                                <h6><b><em><?php echo ($d['status']==1?'Usado':'Disponible'); ?></em></b></h6>
                             </td>
                             <td class="my_td text-center border-0 py-2">
                                 <h6><b><em>
@@ -180,6 +162,47 @@
 
                                         </em></b></h6>
                             </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['user_name']; ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['email']; ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em>
+                                            <?php echo $d['ticket']; ?>
+
+                                                <button class="btn btn-sm bg-warning p-1 data-to-alert"
+                                                data-bs-toggle="modal" data-bs-target="#my_alert"
+                                                data-to-alert='<?php echo json_encode($d); ?>'
+                                                >
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                        
+                                        </em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['score']; ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo ($d['status']==1?'Usado':'Disponible'); ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['telephone']; ?></em></b></h6>
+                            </td>
+                            
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['state'].', '.$d['city']; ?></em></b></h6>
+                            </td>
+
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['date']; ?></em></b></h6>
+                            </td>
+                            <td class="my_td text-center border-0 py-2">
+                                <h6><b><em><?php echo $d['establishment']; ?></em></b></h6>
+                            </td>
+                            
+                            
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -187,44 +210,31 @@
             </div>
         </div>
 
-        <div class="row mb-4">
-            <div class="col-sm-12">
-                <h4 class="text-center"><b><em>Ganadores de la semana</em></b></h4>
+        <div class="row mb-4 pt-4">
+
+            <div class="col-sm-12 d-flex justify-content-center">
+                    <h4 class="text-center mx-4"><b><em>Ganadores de la semana
+                        <select class="form-select" id="weeks">
+                            <option value="'2024-06-17' AND '2024-06-23'"><b>Semana 1: Del 17 al 23 de Junio</b></option>
+                            <option value="'2024-06-24' AND '2024-06-30'"><b>Semana 2: Del 24 al 30 de Junio</b></option>
+                            <option value="'2024-07-01' AND '2024-07-07'"><b>Semana 3: Del 01 al 07 de Julio</b></option>
+                            <option value="'2024-07-08' AND '2024-07-14'"><b>Semana 4: Del 08 al 14 de Julio</b></option>
+                            <option value="'2024-07-15' AND '2024-07-21'"><b>Semana 5: Del 15 al 21 de Julio</b></option>
+                            <option value="'2024-07-22' AND '2024-07-28'"><b>Semana 6: Del 22 al 28 de Julio</b></option>
+                            <option value="'2024-07-29' AND '2024-08-04'"><b>Semana 7: Del 19 de julio al 4 de Agosto</b></option>
+                            <option value="'2024-08-05' AND '2024-08-11'"><b>Semana 8: Del 05 al 11 de Agosto</b></option>
+                        </select>
+                </em></b></h4>
+                </div>    
             </div>
+
             <div class="col-sm-12">
 
-                <div class="row">
-                    <div class="col-sm-3 d-flex flex-row-reverse">
-                        <a href="http://localhost/gestion/index.php?s=<?php echo $week + 1; ?>">
-                            <button class="btn btn-warning"><i class="bi bi-caret-left-fill"></i> <b>Ir una semana
-                                    atras</b></button>
-                        </a>
-                    </div>
-                    <div class="col-sm-6">
-                        <h4 class="text-center"><b>
-                                <?php
-                        if ($week == 0) {
-                            echo 'Semana actual';
-                        }
-                        if ($week >= 1) {
-                            echo $week . ' Semanas atras';
-                        }
-                        ?>
-                            </b></h4>
-                    </div>
-                    <div class="col-sm-3 d-flex flex-row">
-                        <?php if ($week >= 1): ?>
-                        <a href="http://localhost/gestion/index.php?s=<?php echo $week - 1; ?>">
-                            <button class="btn btn-warning"><b>Ir una semana delante</b> <i
-                                    class="bi bi-caret-right-fill"></i></button>
-                        </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <div class="row" style="height:500px;">
+                
+                <div class="row" style="min-height:500px;">
 
-                    <div class="col-sm-12 mt-5">
-                        <table id="myTable2" class="table table-dark table-striped">
+                    <div class="col-sm-12 mt-5 overflow-auto" >
+                        <table id="myTable2" class="table table-dark table-striped table-responsive">
                             <thead>
                                 <tr class="text-center">
                                     <th class="my_td"><b>#</b></th>
@@ -259,7 +269,7 @@
                                         <h4><b><em><?php echo $d['nticket']; ?></em></b></h4>
                                     </td>
                                     <td class="my_td text-center border-0 py-2">
-                                        <h4><b><em><?php echo $d['max_score']; ?></em></b></h4>
+                                        <h4><b><em><?php echo $d['max_score']; ?> Pts</em></b></h4>
                                     </td>
 
                                 </tr>
@@ -274,7 +284,7 @@
                 </div>
             </div>
         </div>
-
+        
     </div>
 </body>
 
@@ -286,7 +296,6 @@
     <input type="hidden" name="ticket" value="">
     <input type="hidden" name="email" value="">
 </form>
-
 <div class="modal fade" id="my_alert" tabindex="-1" aria-modal="true">
     <div class="modal-dialog modal-dialog-centered mw-900px">
         <div class="modal-content">
@@ -332,6 +341,30 @@
 
 </html>
 <script>
+function logout(){
+    localStorage.setItem("raidlogin", false);
+    Swal.fire({
+      icon: "success",
+      title: "Cerrando sesión",
+      showConfirmButton: false,
+      timer: 30000,
+      
+      didOpen: () => {
+        Swal.showLoading();
+        const timer = Swal.getPopup().querySelector("b");
+        timerInterval = setInterval(() => {
+          timer.textContent = `${Swal.getTimerLeft()}`;
+        }, 100);
+      },
+      willClose: () => {
+        clearInterval(timerInterval);
+      }
+  
+    });
+    
+    window.location.href = window.location.href;
+
+}
 function F() {
     const swalWithTwoInputs = Swal.mixin({
         input: 'text',
@@ -355,6 +388,7 @@ function F() {
         },
         {
             title: 'Ingresa tu contraseña:',
+            input: 'password',
             inputPlaceholder: 'Escribe aquí...',
             inputValidator: (value) => {
                 if (!value) {
@@ -363,12 +397,13 @@ function F() {
             }
         }
     ]).then((r) => {
-        if (r.value[0] == 'x' && r.value[1] == 'x') {
+        if (r.value[0] == 'gestionraid' && r.value[1] == 'raid') {
             Swal.fire({
                 title: `Bienvenido ${r.value[0]}`,
                 showDenyButton: false,
                 showCancelButton: false
             });
+            localStorage.setItem("raidlogin", true);
         } else {
             Swal.fire({
                 title: "Contraseña incorrecta",
@@ -381,13 +416,34 @@ function F() {
         }
     });
 }
+function islogin(){
+    if(localStorage.getItem("raidlogin") == null){
+        localStorage.setItem("raidlogin", "false");
+        F();
+    }else{
+        if(localStorage.getItem("raidlogin") == 'false'){
+            F();
+        }
+    }
+}
 $(document).ready(function() {
-    // F();
+    if(localStorage.getItem("raidlogin") == null){
+        localStorage.setItem("raidlogin", "false");
+        F();
+    }else{
+        if(localStorage.getItem("raidlogin") == false){
+            F();
+        }
+    }
+    
     $('#miTabla').DataTable({
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-        }
+        },
+        responsive: true
     });
+    const urlParams = new URLSearchParams(window.location.search);
+    $('#weeks').val(urlParams.get('s')??"'2024-06-17' AND '2024-06-23'");
 });
 
 const btnChange = document.querySelectorAll('.data-to-modal');
@@ -463,8 +519,15 @@ btnPhoto.forEach(b => {
         my_alert.find('#score').text(json.score);
         my_alert.find('#establishment').text(json.establishment);
         my_alert.find('#photo').prop("src",
-            `http://localhost/puntajes2/assets/tickets_fotos/${json.photo}`);
+            `https://expertosraid.com/juego/puntajes/assets/tickets_fotos/${json.photo}`);
 
     });
 });
+
+var select = document.getElementById('weeks');
+    select.addEventListener('change', function() {
+        var selectedOption = select.options[select.selectedIndex];
+        var link = 'https://gestor.expertosraid.com/index.php?s='+selectedOption.value;
+        window.location.href = link;
+    });
 </script>
