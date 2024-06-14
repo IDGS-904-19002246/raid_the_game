@@ -5,10 +5,11 @@ $model = new Model();
 $model_api = new ApiModel();
 date_default_timezone_set('America/Mexico_City');
 
-// $json = $model->ToJson(file_get_contents('web_notas.txt'));
-// echo json_encode($json);
+$json = $model->ToJson(file_get_contents('web_notas.txt'));
+$nota = $json['leads']['note'][0]['note'];
+echo json_encode($nota);
 
-// $nota = $json['leads']['note'][0]['note'];
+
 
 // $cambio = $model->selectCambio($nota['element_id'])[0];
 

@@ -3,9 +3,8 @@ function conectarDB($ip, $user, $pass, $db)
 {
     // $mysqli = new mysqli("74.208.39.15", "adcontrol_kommo_leads", "1dz0u3K%0", "adcontrol_kommo_leads");
     $mysqli = new mysqli($ip, $user, $pass, $db);
-    if ($mysqli->connect_error) {
-        die("Error de conexión: " . $mysqli->connect_error);
-    }
+    if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
+    $mysqli->set_charset("utf8");
     return $mysqli;
 }
 $mysqli = conectarDB("74.208.39.15", "adcontrol_kommo_leads", "1dz0u3K%0", "adcontrol_kommo_leads");
@@ -99,6 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             c.lead_nombre,
             c.contacto_nombre,
             c.id_responsable,
+            c.programa,
             json_arrayagg( DISTINCT (SELECT e.etapa FROM leads_kommo_embudos_etapas e WHERE e.id_etapa = c.etapa) ) etapa,
             (SELECT COUNT(*) FROM leads_kommo_cambios c2 WHERE c2.idkommo = c.idkommo AND c2.fecha LIKE CONCAT('{$today}','%')) cambios,
             (SELECT COUNT(*) FROM leads_kommo_tareas t WHERE t.idkommo = c.idkommo AND t.fecha LIKE CONCAT('{$today}','%')) tareas,
@@ -256,6 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <th class="MyTh">NO.</th>
                         <th class="MyTh">LEAD</th>
                         <th class="MyTh">CONTACTO</th>
+                        <th class="MyTh">PROGRAMA</th>
                         <th class="MyTh">ETAPA</th>
                         <th class="MyTh">CAMBIOS</th>
                         <th class="MyTh">TAREAS</th>
@@ -270,9 +271,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <td class=""><?php echo $row['idkommo']; ?></td>
                             <td class=""><?php echo $row['lead_nombre']; ?></td>
                             <td class=""><?php echo $row['contacto_nombre']; ?></td>
+                            <td class=""><?php echo $row['programa']; ?></td>
                             <td class=""><?php
-                            $R = json_decode($row['etapa']);
-                            echo end($R) != 'null' ? end($R) : '';
+                                $R = json_decode($row['etapa']);
+                                echo end($R) != 'null' ? end($R) : '';
                             ?></td>
                             <td class=""><?php echo $row['cambios']; ?></td>
                             <td class=""><?php echo $row['tareas']; ?></td>
@@ -332,7 +334,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tbody>
                 <tfoot>
                     <tr class="mt-5">
-                        <th colspan="4" style="text-align:right">Conteo: </th>
+                        <th colspan="5" style="text-align:right">Conteo: </th>
                         <td class="text-center">0</td>
                         <td class="text-center">0</td>
                         <td class="text-center">4</td>
@@ -379,15 +381,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 let intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
 
-                changes = api.column(4, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
-                tasks = api.column(5, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
-                notes = api.column(6, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
-                calls = api.column(7, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+                changes = api.column(5, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+                tasks = api.column(6, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+                notes = api.column(7, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+                calls = api.column(8, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
 
-                api.column(4).footer().innerHTML = changes;
-                api.column(5).footer().innerHTML = tasks;
-                api.column(6).footer().innerHTML = notes;
-                api.column(7).footer().innerHTML = calls;
+                api.column(5).footer().innerHTML = changes;
+                api.column(6).footer().innerHTML = tasks;
+                api.column(7).footer().innerHTML = notes;
+                api.column(8).footer().innerHTML = calls;
             }
             // searching: false,paging: false,info: false
         });

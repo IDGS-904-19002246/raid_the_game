@@ -6,9 +6,9 @@ $model_api = new ApiModel();
 date_default_timezone_set('America/Mexico_City');
 
 
-// $json = $model->ToJson(file_get_contents('web_cambios.txt'));
-// $leads = $json['leads']['update'][0];
-// echo json_encode($json);
+$json = $model->ToJson(file_get_contents('web_cambios.txt'));
+$leads = $json['leads']['update'][0];
+echo json_encode($leads);
 
 // $contacts = $model_api->getLeads($leads['id']);
 
