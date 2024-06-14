@@ -1,10 +1,4 @@
-﻿<!-- ?php
-if (!isset($_GET['ticket'])) {
-    header("Location: otra_pagina.php");
-    exit();
-}
-?> -->
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
@@ -49,21 +43,6 @@ if (!isset($_GET['ticket'])) {
 </head> 
  
 <body> 
-<script>
-		var queryString = window.location.search;
-		var parametros = new URLSearchParams(queryString);
-		const _index = "https://expertosraid.com";
-
-		if (parametros.get('ticket') == '' || parametros.get('ticket') == null || parametros.get('ticket') == undefined) {
-			window.location.href = _index;
-		} else {
-		        fetch(`https://expertosraid.com/score.php?ticket=${parametros.get('ticket')}`)
-    				.then(response => response.text())
-    				.then(text => {
-    					if (text == '0') { window.location.href = _index; }
-    				});
-		}
-	</script>
 	<div id="fb-root"></div>
 	
 	<script>
@@ -79,6 +58,7 @@ if (!isset($_GET['ticket'])) {
 	
 	<!-- The canvas must be inside a div called c2canvasdiv -->
 	<div id="c2canvasdiv">
+	
 		<!-- The canvas the project will render to.  If you change its ID, don't forget to change the
 		ID the runtime looks for in the jQuery events above (ready() and cr_sizeCanvas()). -->
 		<canvas id="c2canvas" width="360" height="640">
