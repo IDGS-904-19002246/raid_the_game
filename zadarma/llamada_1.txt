@@ -1,0 +1,1 @@
+event=NOTIFY_OUT_END&call_start=2024-06-05+09%3A27%3A08&pbx_call_id=out_4d9f1846b483219d301533c78b0e7f109dfa39cb&caller_id=524772995047&internal=201&destination=524775429782&duration=37&status_code=16&is_recorded=0&calltype=normal&disposition=answered

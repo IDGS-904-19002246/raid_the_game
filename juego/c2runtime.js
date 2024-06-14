@@ -25704,10 +25704,17 @@ cr.getObjectRefTable = function () { return [
 	cr.plugins_.Function,
 	cr.plugins_.Keyboard,
 	cr.plugins_.Mouse,
+<<<<<<< HEAD
 	cr.plugins_.Sprite,
 	cr.plugins_.TiledBg,
 	cr.plugins_.Touch,
 	cr.plugins_.Spritefont2,
+=======
+	cr.plugins_.Touch,
+	cr.plugins_.TiledBg,
+	cr.plugins_.Spritefont2,
+	cr.plugins_.Sprite,
+>>>>>>> 214dbcbe62aacdb7efae96620c04fa1db15a0f42
 	cr.behaviors.wrap,
 	cr.behaviors.bound,
 	cr.behaviors.EightDir,
