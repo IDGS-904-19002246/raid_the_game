@@ -81,7 +81,7 @@ class Model
     function insertCambios(
         $idkommo,$lead_nombre,$pipeline,
         $etapa,$id_responsable,$fecha,
-        $fuente,$fecha_asignacion,
+        $fuente,$fecha_asignacion,$programa,
 
         $id_contacto,$contacto_nombre,$correo,$telefono,
     ){
@@ -92,6 +92,7 @@ class Model
             `idkommo`,`lead_nombre`,`pipeline`,
             `etapa`,`id_responsable`,`fecha`,
             `fuente`,`fecha_asignacion`,
+            `programa`,
 
             `id_contacto`,`contacto_nombre`,`correo`,`telefono`
         )VALUES(
@@ -105,6 +106,7 @@ class Model
 
             '".$fuente."',
             '".$fecha_asignacion."',
+            '".$programa."',
 
             ".$id_contacto.",
             '".$contacto_nombre."',

@@ -1,4 +1,7 @@
 <?php
+
+// 69303187
+// 142
 function conectarDB($ip, $user, $pass, $db)
 {
     // $mysqli = new mysqli("74.208.39.15", "adcontrol_kommo_leads", "1dz0u3K%0", "adcontrol_kommo_leads");
@@ -11,23 +14,62 @@ $mysqli = conectarDB("74.208.39.15", "adcontrol_kommo_leads", "1dz0u3K%0", "adco
 $mysqlis = conectarDB("104.254.245.234", "adcontrol", '491n$iuZ1', "scontrol2019");
 date_default_timezone_set('America/Mexico_City');
 
-$today = date('Y-m-d');
+setlocale(LC_TIME, 'es_ES.UTF-8');
+$base = new DateTime('last monday');
+// WEEK
+$lun = date_create($base->format('Y-m-d'));
+$base->modify('+1 day');
+$mar = date_create($base->format('Y-m-d'));
+$base->modify('+1 day');
+$mie = date_create($base->format('Y-m-d'));
+$base->modify('+1 day');
+$jue = date_create($base->format('Y-m-d'));
+$base->modify('+1 day');
+$vie = date_create($base->format('Y-m-d'));
+
+// echo date_format($lun,'Y-m-d');
+// echo date_format($lun,"d/M/y");
+
+$meets = json_decode('{}',true);
+$inscritos = json_decode('{}',true);
+$llamadas = json_decode('{}',true);
 $MyAsesor = 0;
-$result_to_chart = array();
-$dataPoints = array(
-    array("label" => 'Asignados', "y" => 0),
-    array("label" => 'Llamar', "y" => 0),
-    array("label" => 'Interesados', "y" => 0),
-    array("label" => 'Sin Interes', "y" => 0),
-    array("label" => 'Propuesta', "y" => 0)
-);
+$MyCedula = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql ="SELECT*FROM f";
-    if (isset($_POST['MyDate'])) {
-        $today = $_POST['MyDate'];
-    }
-    if (isset($_POST['MyAsesor'])) {
+    if (isset($_POST['MyAsesor']) && isset($_POST['MyCedula'])) {
         $MyAsesor = $_POST['MyAsesor'];
+        $MyCedula = $_POST['MyCedula'];
+        $extension = $_POST['extension'];
+        // MEETS
+        $sql = "SELECT JSON_OBJECTAGG(f, c) AS meet FROM (
+            SELECT DATE(t.fecha) f,COUNT(*) c
+            FROM leads_kommo_tareas t
+            WHERE (t.fecha BETWEEN '".date_format($lun,'Y-m-d')."' AND '".date_format($vie,'Y-m-d')."')
+            AND t.id_responsable = ".$MyAsesor." GROUP BY DATE(t.fecha)
+            ) AS meet";
+        $result = $mysqli->query($sql);
+        if ($result){$meets = json_decode($result->fetch_assoc()['meet']??'{}', true);}
+
+        // INSCRITOS
+        $sql = "SELECT JSON_OBJECTAGG(f, cc) AS inscritos FROM (
+	        SELECT DATE(c.fecha) f,COUNT(*) cc
+            FROM leads_kommo_cambios c
+            WHERE (c.fecha BETWEEN '".date_format($lun,'Y-m-d')."' AND '".date_format($vie,'Y-m-d')."')
+            AND c.id_responsable = ".$MyAsesor." AND c.etapa = 142
+            GROUP BY DATE(c.fecha)
+        ) AS inscritos";
+        $result = $mysqli->query($sql);
+        if ($result){$inscritos = json_decode($result->fetch_assoc()['inscritos']??'{}', true);}
+        //LLAMADAS EFECTIVAS
+        $sql = "SELECT JSON_OBJECTAGG(f, c) AS llamadas FROM (
+            SELECT DATE(ll.call_date) f,COUNT(*) c
+            FROM leads_zadarma_llamadas ll
+            WHERE (ll.call_date BETWEEN '".date_format($lun,'Y-m-d')."' AND '".date_format($vie,'Y-m-d')."')
+            AND ll.duration >= 20 AND ll.internal = ".$extension."
+            GROUP BY DATE(ll.call_date)
+        ) AS llamadas";
+        $result = $mysqli->query($sql);
+        if ($result){$llamadas = json_decode($result->fetch_assoc()['llamadas']??'{}', true);}
     }
 }
 
@@ -76,6 +118,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             /* color: white !important; */
             /* background-color: #C1D4F1 !important; */
         }
+        .MyThDate{
+            writing-mode: sideways-lr;
+            padding: 10px;
+            width: 3em;
+            text-align: center;
+        }
         /* .MyTh2 {
             border: #3e2b0e solid 1px;
             background-color: #c1d4f1 !important;
@@ -95,28 +143,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body class="p-4">
-
+    <!-- ENCABEZADO -->
     <div class="px-4">
         <h6 class="border border-dark text-center m-0">
             <div class="border border-dark p-1">FORMATO PLAN DE TRABAJO SEMANAL</div>
         </h6>
         <div class="border border-dark w-100">
             <form class="row w-100 m-0" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-
+                <input type="hidden" name="extension" value="" id="MyExtension">
                 <div class="col-sm-2 border border-dark p-1">
                     <input class="form-control form-control-sm bg-light" type="text" value="ASESOR:" readonly disabled>
                 </div>
-                <div class="col-sm-5 border border-dark p-1">
+                <div class="col-sm-4 border border-dark p-1">
                     <select class="form-control form-control-sm" aria-describedby="MyAsesorHelp" id="MyAsesor"
                         name="MyAsesor">
-                        <option value="0">Ninguno</option>
+                        <option value="0" extension="0">Ninguno</option>
                         <?php if ($mysqlis->connect_error): ?>
                         <?php else:
-                            $sql2 = "SELECT p.idKommo, p.pnombre, p.idUsuarioKommo from dwork_personal p WHERE p.dip=4 AND p.inactivo=0";
+                            $sql2 = "SELECT p.idKommo, p.pnombre, p.idUsuarioKommo, p.extension from dwork_personal p WHERE p.dip=4 AND p.inactivo=0";
                             $result2 = $mysqlis->query($sql2);
                             if ($result2):
                                 while ($row2 = $result2->fetch_assoc()): ?>
-                                    <option value="<?php echo $row2['idUsuarioKommo']; ?>" <?php echo ($MyAsesor==$row2['idUsuarioKommo']?'selected':'no'); ?>><?php echo $row2['pnombre']; ?></option> 
+                                    <option value="<?php echo $row2['idUsuarioKommo']; ?>" <?php echo ($MyAsesor==$row2['idUsuarioKommo']?'selected':'no'); ?>
+                                        extension="<?php echo $row2['extension']; ?>"
+                                        ><?php echo $row2['pnombre']; ?></option> 
                                 <?php endwhile; ?>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -126,31 +176,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input class="form-control form-control-sm bg-light" type="text" value="CEDULA:" readonly disabled>
                 </div>
                 <div class="col-sm-2 border border-dark p-1">
-                    <input type="text" class="form-control form-control-sm" aria-describedby="DateHelp" id="MyDate" name="MyDate" value="LEON GUANAJUATO" required>
+                    <input type="text" class="form-control form-control-sm" aria-describedby="DateHelp" id="MyCedula" name="MyCedula" value="LEON GUANAJUATO" required>
                 </div>
-                <div class="col-sm-1 border border-dark p-1">
+                <div class="col-sm-2 border border-dark p-1">
                     <div class="align-self-center text-center">
-                        <button type="submit" class="btn btn-sm btn-primary w-75">Ir al dia</button>
+                        <button type="submit" class="btn btn-sm btn-primary w-75">Obtener Reporte</button>
                     </div>
                 </div>
 
             </form>
         </div>
     </div>
-
+    <!-- ?php echo json_encode($meets['clave'] == null ?? 'no hay nada' );?> -->
+    <!-- TABLA -->
     <div class="px-4 w-100">
         <div class="col-sm-12 overflow-auto">
             <table id="MyTable" class="table table-striped overflow-auto">
                 <thead>
                     <tr class="text-center align-middle">
-                        <th class="MyTh" colspan="2" style="width:20%;">ACTIVIDAD</th>
+                        <th class="MyTh" colspan="2" style="width:30%;">ACTIVIDAD</th>
                         <th class="MyTh">TIEMPO</th>
-
-                        <th class="MyTh" style="writing-mode: sideways-lr;">17 Jun 24</th>
-                        <th class="MyTh" style="writing-mode: sideways-lr;">18 Jun 24</th>
-                        <th class="MyTh" style="writing-mode: sideways-lr;">19 Jun 24</th>
-                        <th class="MyTh" style="writing-mode: sideways-lr;">20 Jun 24</th>
-                        <th class="MyTh" style="writing-mode: sideways-lr;">21 Jun 24</th>
+                        
+                        <th class="MyTh MyThDate" ><?php echo date_format($lun,'d M y');?></th>
+                        <th class="MyTh MyThDate" ><?php echo date_format($mar,'d M y');?></th>
+                        <th class="MyTh MyThDate" ><?php echo date_format($mie,'d M y');?></th>
+                        <th class="MyTh MyThDate" ><?php echo date_format($jue,'d M y');?></th>
+                        <th class="MyTh MyThDate" ><?php echo date_format($vie,'d M y');?></th>
 
                         <th class="MyTh" style="width:10%;">TOTAL</th>
                         <th class="MyTh" style="width:10%;">TASA DE CONVERSION</th>
@@ -254,27 +305,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">1</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($inscritos[date_format($lun,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">1</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($inscritos[date_format($mar,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">1</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($inscritos[date_format($mie,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">1</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($inscritos[date_format($jue,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">1</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($inscritos[date_format($vie,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">1</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo array_sum($inscritos);?></div>
                         </td>
                         <!-- ------------------------------------------------------------------ -->
                         <td class="text-center align-middle">25</td>
@@ -290,27 +341,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">6</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($meets[date_format($lun,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">6</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($meets[date_format($mar,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">6</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($meets[date_format($mie,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">6</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($meets[date_format($jue,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">6</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($meets[date_format($vie,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">6</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo array_sum($meets);?></div>
                         </td>
                         <!-- ------------------------------------------------------------------ -->
                         <td class="text-center align-middle">30</td>
@@ -326,27 +377,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">60</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($llamadas[date_format($lun,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">60</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($llamadas[date_format($mar,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">60</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($llamadas[date_format($mie,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">60</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($llamadas[date_format($jue,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">60</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo ($llamadas[date_format($vie,'Y-m-d')] ?? 0) ?></div>
                         </td>
                         <td class="p-0 text-center">
                             <div class="p-2 MyTd">60</div>
-                            <div class="p-2"></div>
+                            <div class="p-2"><?php echo array_sum($llamadas);?></div>
                         </td>
                         <!-- ------------------------------------------------------------------ -->
                         <td class="text-center align-middle">600</td>
@@ -375,7 +426,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         </div>
     </div>
-
+    <!-- SECCION DE FIRMAS -->
     <div class="px-4" style="margin-top:150px;">
         <div class="row">
             <div class="col-sm-1"></div>
@@ -395,6 +446,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 
 <script>
+    // $('#MyAsesor')[0]
+    var select = document.getElementById('MyAsesor')
+    select.addEventListener('change',function(e){
+        var selectedOption = select.options[select.selectedIndex];
+        $('#MyExtension').val(selectedOption.getAttribute('extension'));
+    });
+
     $(document).ready(function () {
         $('#MyTable').DataTable({
             "language": { "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" },

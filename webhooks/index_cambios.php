@@ -6,9 +6,9 @@ $model_api = new ApiModel();
 date_default_timezone_set('America/Mexico_City');
 
 
-$json = $model->ToJson(file_get_contents('web_cambios.txt'));
-$leads = $json['leads']['update'][0];
-echo json_encode($leads);
+// $json = $model->ToJson(file_get_contents('web_cambios.txt'));
+// $leads = $json['leads']['update'][0];
+// echo json_encode($leads);
 
 // $contacts = $model_api->getLeads($leads['id']);
 
@@ -66,7 +66,11 @@ echo json_encode($leads);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $json = $model->ToJson(file_get_contents("php://input"));
+    // $json = $model->ToJson(file_get_contents('web_cambios.txt'));
     $leads = $json['leads']['update'][0];
+
+    
+    // echo json_encode( $model->$model->getValueFromItem($leads['custom_fields'], 'name', 'Programa')[0]['values'][0]);
 
     $contacts = $model_api->getLeads($leads['id']);
     echo json_encode($contacts);
@@ -96,11 +100,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // $fuente,$fecha_asignacion
             $model->getValueFromItem($leads['custom_fields'], 'name', 'Fuente')['values'][0]['value'],
             $model->getDate($model->getValueFromItem($leads['custom_fields'], 'name', 'Fecha de Asignación')['values'][0]),
-
+            $model->getValueFromItem($leads['custom_fields'], 'name', 'Programa')['values'][0]['value'],
             // $id_contacto,$contacto_nombre,$correo,$telefono,
             $contact['id'],$contact['name'],$contact['email'],$contact['phone']
         );
+
+        // en lugar de "&ntilde;" cuando pongo la "ñ" aparece "Ã±"
 }
-
-
 ?>
