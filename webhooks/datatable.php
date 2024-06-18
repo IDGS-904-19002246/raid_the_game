@@ -219,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             }
                         }
                     }
-                    $dataPoints[0]['y'] = $dataPoints[1]['y']+$dataPoints[2]['y']+$dataPoints[3]['y'];
+                    $dataPoints[0]['y'] = $dataPoints[1]['y']+$dataPoints[2]['y']+$dataPoints[3]['y']+$dataPoints[4]['y'];
                 }
             }
         }
@@ -267,6 +267,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <tbody>
                     <!-- --------------------------------------------------------------------------------------------------------- -->
                     <?php foreach ($result_to_chart as $row): ?>
+                        <?php if($row['etapa'] != '["Clasificacion BD"]'): ?>
+                        <?php endif;?>
                         <tr class="MyTr">
                             <td class=""><?php echo $row['idkommo']; ?></td>
                             <td class=""><?php echo $row['lead_nombre']; ?></td>

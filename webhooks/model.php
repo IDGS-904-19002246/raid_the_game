@@ -185,6 +185,33 @@ class Model
         if ($mysqli->query($sql) != 1) {echo '<script>console.log('.$mysqli->error.')</script>';}
         $mysqli->close();
     }
+    function insertAgregar(
+        $id,$name,$status_id,
+        $pipeline_id,$responsible_user_id,$created_user_id,
+        $created_at
+    ){
+        $mysqli = conectarDB();
+        if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
+
+        $sql = "INSERT INTO leads_kommo_agregados(
+            `idkommo`,`name`,`status_id`,
+            `pipeline_id`,`responsible_user_id`,`created_user_id`,
+            `created_at`
+        )VALUES(
+            ".$id.",
+            '".$name."',
+            ".$status_id.",
+
+            ".$pipeline_id.",
+            ".$responsible_user_id.",
+            ".$created_user_id.",
+
+            '".$created_at."'
+        )";
+
+        if ($mysqli->query($sql) != 1) {echo '<script>console.log('.$mysqli->error.')</script>';}
+        $mysqli->close();
+    }
     // -------------------------------------------------------------
     function insertConversaciones(
         $idkommo,$lead_nombre,$actividad,
