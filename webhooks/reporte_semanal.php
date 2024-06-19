@@ -17,11 +17,6 @@ date_default_timezone_set('America/Mexico_City');
 setlocale(LC_TIME, 'es_ES.UTF-8');
 $base = new DateTime('last monday');
 
-// if ($_SERVER["REQUEST_METHOD"] == "POST") {if(isset($_POST['weeksback'])){
-//         if($_POST['weeksback']){
-//             // $base = $base->sub(new DateInterval('P'.$_POST['weeksback'].'W'));
-//         }
-// }}
 // WEEK
 $lun = date_create($base->format('Y-m-d'));
 $base->modify('+1 day');
@@ -43,6 +38,7 @@ $inscritos = json_decode('{}',true);
 $llamadas = json_decode('{}',true);
 $interesados = json_decode('{}',true);
 $prospectos = json_decode('{}',true);
+$ingreso = 0;
 $MyAsesor = 0;
 $MyCedula = '';
 $weeksback = 0;
@@ -117,6 +113,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ) AS prospectos";
         $result = $mysqli->query($sql);
         if ($result){$prospectos = json_decode($result->fetch_assoc()['prospectos']??'{}', true);}
+        // INGRESO
+        $sql ="SELECT sum(a.abcantidad) as cobrado
+            from dwork_alumnos_abonos a
+            inner join dwork_alumnos_grupos b on a.agid=b.agid
+            where b.dequienes=2 and 
+                a.abfecha BETWEEN '".date_format($lun,'Y-m-d')."' AND '".date_format($sab,'Y-m-d')."'";
+        $result = $mysqlis->query($sql);
+        if ($result){$ingreso = $result->fetch_assoc()['cobrado']??0;}
+//         SELECT
+// 	sum(a.abcantidad) as cobrado
+// from dwork_alumnos_abonos a
+// inner join dwork_alumnos_grupos b on a.agid=b.agid
+// where b.dequienes=2 and a.abfecha>'2024-05-05' and a.abfecha < '2024-05-11'
     }
 }
 
@@ -486,9 +495,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </td>
                         <td class="p-0">
                             <div class="p-2 MyTd">$ 20,000.00</div>
-                            <div class="p-2"></div>
+                            <div class="p-2">
+                                <span>$</span>
+                                <span class="ingreso"><?php echo $ingreso; ?></span>
+                            </div>
                         </td>
-                        <td class="text-center align-middle" id="sum"></td>
+                        <td class="text-center align-middle" id="ingreso"></td>
                     </tr>
                     <!-- --------------------------------------------------------------------------------------------------------- -->
                     <br>
@@ -519,9 +531,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script>
 
     function sum() {
-        t = 0;
-        $('.sum').each(function() {t += parseFloat($(this).text()) });
-        $('#sum').text(t);
+        // t = 0;
+        // $('.ingreso').each(function() {t += parseFloat($(this).text()) });
+
+        $('#ingreso').text(
+            (parseInt( $('.ingreso').text() )*100/20000).toFixed(2) + ' %'
+        );
     }
     sum();
     // $('#MyAsesor')[0]
