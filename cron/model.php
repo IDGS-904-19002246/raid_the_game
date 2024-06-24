@@ -7,6 +7,7 @@ class ModelCron
         if ($mysqli->connect_error) {die("Error de conexión: " . $mysqli->connect_error);}
 
         $sql = "SELECT 
+                p.pid,
                 p.idKommo,
                 p.pnombre,
                 p.asignacionDiaria,
@@ -35,7 +36,7 @@ class ModelCron
         $sql = "SELECT 
                 sum(p.asignacionDiaria) total
             FROM dwork_personal p
-            WHERE p.idKommo IS NOT NULL LIMIT 2";
+            WHERE p.idKommo IS NOT NULL";
 
         $datos = array();
         $result = $mysqli->query($sql);
@@ -86,6 +87,24 @@ class ModelCron
             while ($row = $result->fetch_assoc()) {$data[] = $row;}
             $mysqli->close();
             return $data;
+        }
+    }
+    function getToday($id, $fecha){
+        $mysqli = conectarDB();
+        if ($mysqli->connect_error) {
+            die("Error de conexión: " . $mysqli->connect_error);
+        }
+        $sql = "SELECT COUNT(*) total
+            from AttendanceRecordInfo ar
+            WHERE FROM_UNIXTIME(ar.AttendanceDateTime / 1000) LIKE '{$fecha}%' AND ar.PersonID = {$id}";
+        // WHERE DATE_FORMAT(FROM_UNIXTIME(ar.AttendanceDateTime / 1000), '%Y-%m-%d') = '{$fecha}';
+        $result = $mysqli->query($sql);
+        if ($result) {
+            $mysqli->close();
+            return $result->fetch_assoc()['total'];
+        } else {
+            $mysqli->close();
+            return 0;
         }
     }
     // ----------------------------------------------------------------------

@@ -13,84 +13,88 @@ $suma = $ModelCron->selectPersonalSum()[0]['total'];
 $count = 0;
 
 for ($i = 0; $i < count($personal_list); $i++) {
-
-    if($personal_list[$i]['asignacionDiaria'] <= $ModelCron->selectPersonalCount($personal_list[$i]['idUsuarioKommo'],$hoy0)[0]['total'] ){
-        echo $personal_list[$i]['pnombre'] . " Limite de leads alcanzado <br>";
-    }else{
-        $cron = $ModelCron->selectCron();
-        $json = '{
-            "id":"' . $cron[0]['idkommo'] . '",
-            "status_id": 70172479,
-            "pipeline_id": 7810667,
-            "loss_reason_id": null,
-            "responsible_user_id":'.$personal_list[$i]['idUsuarioKommo'].',
-            "price": 0,
-
-            "custom_fields_values":[
-                {
-                    "field_id": 937586,
-                    "field_name": "Responsable en Asignación",
-                    "field_type": "text",
-                    "values": [{"value": "'.$personal_list[$i]['nombreKommo'].'"}]
-                },
-                {
-                    "field_id": 936898,
-                    "field_name": "Fecha de inicio",
-                    "field_type": "date",
-                    "values": [{"value": ' . strtotime($cron[0]['fecha_inicio']) . '}]
-                },
-                {
-                    "field_id": 936900,
-                    "field_name": "Horario",
-                    "field_type": "select",
-                    "values": [{"value": "' . $cron[0]['horario'] . '"}]
-                },
-                {
-                    "field_id": 934468,
-                    "field_name": "% de Comisión",
-                    "field_code": null,
-                    "field_type": "numeric",
-                    "values": [{"value": "' . $cron[0]['porcentaje_comision'] . '"}]
-                },
-                {
-                    "field_id": 936758,
-                    "field_name": "Fecha de Asignacion",
-                    "field_type": "date",
-                    "values": [{"value": ' . $hoy . '}]
-                },
-                {
-                    "field_id": 936842,
-                    "field_name": "Nivel de Interés",
-                    "field_code": null,
-                    "field_type": "select",
-                    "values": [{"value": null}]
-                },
-                {
-                    "field_id": 937428,
-                    "field_name": "Tipo de propuesta",
-                    "field_code": null,
-                    "field_type": "select",
-                    "values": [{"value": null}]
-                },
-                {
-                    "field_id": 934470,
-                    "field_name": "Descuento aplicado",
-                    "field_code": null,
-                    "field_type": "select",
-                    "values": [{"value":null}]
-                }
-
-
-            ]}';
-            
-        $ModelCron->updateCron($cron[0]['id'],$hoy0,$personal_list[$i]['idUsuarioKommo']);
-        $ModelCron->updateCronAPI($cron[0]['idkommo'], $json);
-
-        echo $personal_list[$i]['pnombre'] ." se le asigno -> {$cron[0]['idkommo']}<br>";
-
-    }
     
+    if($ModelCron->getToday($personal_list[$i]['pid'], $hoy0) != 0){
+        
+        if($personal_list[$i]['asignacionDiaria'] <= $ModelCron->selectPersonalCount($personal_list[$i]['idUsuarioKommo'],$hoy0)[0]['total'] ){
+            echo $personal_list[$i]['pnombre'] . " Limite de leads alcanzado <br>";
+        }else{
+            $cron = $ModelCron->selectCron();
+            $json = '{
+                "id":"' . $cron[0]['idkommo'] . '",
+                "status_id": 70172479,
+                "pipeline_id": 7810667,
+                "loss_reason_id": null,
+                "responsible_user_id":'.$personal_list[$i]['idUsuarioKommo'].',
+                "price": 0,
+
+                "custom_fields_values":[
+                    {
+                        "field_id": 937586,
+                        "field_name": "Responsable en Asignación",
+                        "field_type": "text",
+                        "values": [{"value": "'.$personal_list[$i]['nombreKommo'].'"}]
+                    },
+                    {
+                        "field_id": 936898,
+                        "field_name": "Fecha de inicio",
+                        "field_type": "date",
+                        "values": [{"value": ' . strtotime($cron[0]['fecha_inicio']) . '}]
+                    },
+                    {
+                        "field_id": 936900,
+                        "field_name": "Horario",
+                        "field_type": "select",
+                        "values": [{"value": "' . $cron[0]['horario'] . '"}]
+                    },
+                    {
+                        "field_id": 934468,
+                        "field_name": "% de Comisión",
+                        "field_code": null,
+                        "field_type": "numeric",
+                        "values": [{"value": "' . $cron[0]['porcentaje_comision'] . '"}]
+                    },
+                    {
+                        "field_id": 936758,
+                        "field_name": "Fecha de Asignacion",
+                        "field_type": "date",
+                        "values": [{"value": ' . $hoy . '}]
+                    },
+                    {
+                        "field_id": 936842,
+                        "field_name": "Nivel de Interés",
+                        "field_code": null,
+                        "field_type": "select",
+                        "values": [{"value": null}]
+                    },
+                    {
+                        "field_id": 937428,
+                        "field_name": "Tipo de propuesta",
+                        "field_code": null,
+                        "field_type": "select",
+                        "values": [{"value": null}]
+                    },
+                    {
+                        "field_id": 934470,
+                        "field_name": "Descuento aplicado",
+                        "field_code": null,
+                        "field_type": "select",
+                        "values": [{"value":null}]
+                    }
+
+
+                ]}';
+                
+            // $ModelCron->updateCron($cron[0]['id'],$hoy0,$personal_list[$i]['idUsuarioKommo']);
+            // $ModelCron->updateCronAPI($cron[0]['idkommo'], $json);
+
+            echo $personal_list[$i]['pnombre'] ." se le asigno -> {$cron[0]['idkommo']}<br>";
+
+        }
+    }
 }
+// tengo un lector facial de la marca dahua conectada a un pc usando smartpss lite y quiero enviar los datos del lector a un servidor, es necesario usar smartpss lite para comunicar el lector facial al servidor
+// Genera una quiery o script de php donde pueda saber cuantas columnas tienen las tablas de mi bade de datos
 
 // $fecha_actual = date('Y-m-d H:i:s');
 // // CONVIERTE LA FECHA ACTUAL A UN TIMESTAMP
