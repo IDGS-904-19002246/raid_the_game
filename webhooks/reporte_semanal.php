@@ -65,34 +65,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['MyAsesor']) && isset($_POST['MyCedula'])) {
         $MyAsesor = $_POST['MyAsesor'];
         $MyCedula = $_POST['MyCedula'];
-        $extension = $_POST['extension'];
-        // MEETS
-        $sql = "SELECT JSON_OBJECTAGG(f, c) AS meet FROM (
-            SELECT DATE(t.fecha) f,COUNT(DISTINCT t.idkommo) c
-            FROM leads_kommo_tareas t
-            WHERE (t.fecha BETWEEN '" . date_format($lun, 'Y-m-d') . "' AND '" . date_format($sab, 'Y-m-d') . "')
-            AND t.id_responsable = " . $MyAsesor . " GROUP BY DATE(t.fecha)
-            ) AS meet";
-        $result = $mysqli->query($sql);
-        // if ($result) {
-        //     $meets = json_decode($result->fetch_assoc()['meet'] ?? '{}', true);
-        // }
-        if ($result) {
-            $row = $result->fetch_assoc();
-            if ($row['meet']) {$meets = json_decode($row['meet'], true);}
-        }
-        
+        $extension = (isset($_POST['extension']) ? $_POST['extension'] : 0);
+        $pid = (isset($_POST['pid']) ? $_POST['pid'] : 0);
+
+        $start = date_format($lun, 'Y-m-d');
+        $end = date_format($sab, 'Y-m-d');
         // INSCRITOS
-        $sql = "SELECT JSON_OBJECTAGG(f, cc) AS inscritos FROM (
-	        SELECT DATE(c.fecha) f,COUNT(DISTINCT c.idkommo) cc
-            FROM leads_kommo_cambios c
-            WHERE (c.fecha BETWEEN '" . date_format($lun, 'Y-m-d') . "' AND '" . date_format($sab, 'Y-m-d') . "')
-            AND c.id_responsable = " . $MyAsesor . " AND c.etapa = 142
+        $sql= "SELECT
+            DATE(t.fecha_altagpo) f,COUNT(DISTINCT t.agid) c
+            FROM dwork_alumnos_grupos t
+            WHERE (t.fecha_altagpo BETWEEN '{$start}' AND '{$end}') AND
+            t.dequienes = {$pid} GROUP BY DATE(t.fecha_altagpo)";
+        $result = $mysqlis->query($sql);
+        if ($result) {
+            while($row = $result->fetch_assoc()){
+                $inscritos[$row['f']] = $row['c'];
+            }
+        }
+        // MEETS
+        $sql = "SELECT JSON_OBJECTAGG(f, cc) AS meets FROM (
+            SELECT DATE(c.fecha) f,COUNT(DISTINCT c.idkommo) cc
+            FROM leads_kommo_tareas c
+            WHERE (c.fecha BETWEEN '{$start}' AND '{$end}')
+            AND c.id_responsable = {$MyAsesor} AND c.idtipo = 2
             GROUP BY DATE(c.fecha)
-        ) AS inscritos";
+        ) AS meets";
         $result = $mysqli->query($sql);
         if ($result) {
-            $inscritos = json_decode($result->fetch_assoc()['inscritos'] ?? '{}', true);
+            $meets = json_decode($result->fetch_assoc()['meets'] ?? '{}', true);
         }
         //LLAMADAS EFECTIVAS
         $sql = "SELECT JSON_OBJECTAGG(f, c) AS llamadas FROM (
@@ -208,6 +208,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="border border-dark w-100">
             <form class="row w-100 m-0" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="form">
                 <input type="hidden" name="extension" value="" id="MyExtension">
+                <input type="hidden" name="pid" value="" id="MyPid">
                 <div class="col-sm-2 border border-dark p-1">
                     <input class="form-control form-control-sm bg-light" type="text" value="ASESOR:" readonly disabled>
                 </div>
@@ -217,12 +218,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <option value="0" extension="0">Ninguno</option>
                         <?php if ($mysqlis->connect_error): ?>
                         <?php else:
-                            $sql2 = "SELECT p.idKommo, p.pnombre, p.idUsuarioKommo, p.extension from dwork_personal p WHERE p.dip=4 AND p.inactivo=0";
+                            $sql2 = "SELECT p.pid, p.idKommo, p.pnombre, p.idUsuarioKommo, p.extension from dwork_personal p WHERE p.dip=4 AND p.inactivo=0";
                             $result2 = $mysqlis->query($sql2);
                             if ($result2):
                                 while ($row2 = $result2->fetch_assoc()): ?>
-                                    <option value="<?php echo $row2['idUsuarioKommo']; ?>" <?php echo ($MyAsesor == $row2['idUsuarioKommo'] ? 'selected' : 'no'); ?>
-                                        extension="<?php echo $row2['extension']; ?>"><?php echo $row2['pnombre']; ?></option>
+                                    <option
+                                        value="<?php echo $row2['idUsuarioKommo']; ?>"
+                                        extension="<?php echo $row2['extension']; ?>"
+                                        pid="<?php echo $row2['pid']; ?>"
+                                        <?php echo ($MyAsesor == $row2['idUsuarioKommo'] ? 'selected' : 'no'); ?>
+                                        ><?php echo $row2['pnombre']; ?></option>
                                 <?php endwhile; ?>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -342,7 +347,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <!-- NUEVOS PROSPECTOS FRIOS -->
                     <tr>
                         <td class="text-center align-middle">3</td>
-                        <td class="align-middle">NUEVOS PROSPECTOS FRIOS *</td>
+                        <td class="align-middle">NUEVOS PROSPECTOS FRIOS</td>
                         <!-- ------------------------------------------------------------------ -->
                         <td class="p-0">
                             <div class="p-2 MyTd">OBJETIVO</div>
@@ -619,6 +624,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     select2.addEventListener('click', function (e) {
         var selectedOption = select.options[select.selectedIndex];
         $('#MyExtension').val(selectedOption.getAttribute('extension'));
+        $('#MyPid').val(selectedOption.getAttribute('pid'));
         $('#form').submit();
     });
 

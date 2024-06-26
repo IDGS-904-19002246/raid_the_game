@@ -17,6 +17,7 @@ date_default_timezone_set('America/Mexico_City');
 $today = date('Y-m-d');
 $MyAsesor = 0;
 $data = array();
+$data_top = array();
 
 // function compararPorFecha($a, $b)
 // {
@@ -75,11 +76,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result) {
             while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
+                $data_top[] = $row;
             }
             usort($data, function ($a, $b) {
                 return strtotime($b['fecha']) - strtotime($a['fecha']);
             });
-            // echo json_encode($data);
+            usort($data_top, function ($a, $b) {
+                return strtotime($b['fecha']) - strtotime($a['fecha']);
+            });
+            
+            for ($i = 0; $i < count($data); $i++){
+                if($i+1 == count($data)){
+                    $data_top[$i]['min'] = '';
+                }else{
+                    $date0 = strtotime($data[$i]['hora1']);
+                    $date1 = strtotime($data[$i + 1]['hora1']);
+                    $time = $date0 - $date1;
+                    $data_top[$i]['min'] = $time / 60;
+                }                
+            }
+            usort($data_top, function ($a, $b) {
+                if ($b['min'] > $a['min']) {
+                    return 1;
+                } elseif ($b['min'] < $a['min']) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
 
         }
     }
@@ -190,6 +214,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </form>
         </div>
     </div>
+    <!-- TABLA TOP -->
+    <br><br>
+    <div class="px-4">
+        <h2 class="text-center">Mayores Periodos de inactividad</h2>
+        <table id="MyTableTop" class="table table-striped py-4 overflow-auto" style="border: none;">
+            <thead>
+                <tr class="text-center align-middle">
+                    <th class="MyTh">#</th>
+                    <th class="MyTh">ID Kommo</th>
+                    <th class="MyTh">Nombre del Lead</th>
+                    <th class="MyTh">Actividad</th>
+                    <th class="MyTh">Hora</th>
+                    <th class="MyTh" style="width:150px !important;">Tiempo desde la ultima<br>actividad (min)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (count($data) >= 3): ?>
+                    <?php for ($i = 0; $i < 3; $i++): ?>
+                        <tr class="MyTr">
+                            <td><?php echo $i+1; ?></td>
+                            <td><?php echo ($data_top[$i]['idkommo'] != '0') ? $data_top[$i]['idkommo'] : 'Llamada'; ?></td>
+                            <td><?php echo $data_top[$i]['lead_nombre']; ?></td>
+                            <td><?php echo $data_top[$i]['actividad']; ?></td>
+                            <td><?php echo $data_top[$i]['hora']; ?></td>
+                            <td><?php echo $data_top[$i]['min']; ?></td>
+                        </tr>
+                    <?php endfor;?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+    <br><br>
     <!-- TABLA -->
     <div class="p-4 w-100 ">
         <div class="overflow-auto">
@@ -295,6 +351,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // searching: false,
             // paging: false,
             // info: false
+        });
+        $('#MyTableTop').DataTable({
+            language: { "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" },
+            searching: false,paging: false,info: false
         });
 
     });
