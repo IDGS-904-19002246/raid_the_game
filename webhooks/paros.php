@@ -37,13 +37,15 @@ if ($results) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    <!-- BOOTSTRAP SELECT-->
-
+    <!-- BOOTSTRAP ICONS-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
     <!-- JQUERY -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <style>
+        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
         * {
             font-family: Arial;
             font-size: 12px;
@@ -74,6 +76,9 @@ if ($results) {
             box-shadow: none;
             border: #C1D4F1 solid 1px;
         }
+        .options:hover{
+            background-color: #ccc;
+        }
     </style>
 </head>
 
@@ -96,17 +101,17 @@ if ($results) {
 
                 <div class="col-sm-12 p-2 d-flex justify-content-between even">
                     <label class="p-1">Involucrados: </label>
-
-
-                    
-                    <div class="form-control form-control-sm w-50 border border-dark choices-multiple" >
-                        <ul >
-                        <?php foreach($personal as $p):?>
-                            <li value="<?php echo $p['pid']; ?>">
-                                <input type="checkbox" class="p-2 m-1">
-                                <?php echo $p['nombreKommo']; ?>
-                            </li>
-                        <?php endforeach;?>
+                    <div class="form-control form-control-sm w-50 p-0 position-relative" id="select">
+                        <ul class="m-0 list-unstyled border border-dark p-1 rounded ">
+                            <li>Asistentes</li>
+                        </ul>
+                        <ul class="m-0 list-unstyled border border-dark px-2 bg-light rounded w-100 position-absolute">
+                            <?php foreach($personal as $p):?>
+                                <li value="<?php echo $p['pid']; ?>" class="p-1 options rounded" style="display:none;">
+                                    <input type="checkbox" class="p-2 m-1">
+                                    <?php echo $p['nombreKommo']; ?>
+                                </li>
+                            <?php endforeach;?>
                         </ul>
                     </div>
                 </div>
@@ -120,11 +125,13 @@ if ($results) {
 
                 <div class="col-sm-12 p-2 even">
                     <label class="p-1">Descripción el asunto/motivo: </label><br>
-                    <textarea class="w-100" name="" id=""></textarea>
+                    <div class="p-2">
+                        <textarea class="w-100" name="" id=""></textarea>
+                    </div>
                 </div>
 
                 <div class="col-sm-12 p-2 d-flex justify-content-end odd ">
-                    <button class="btn btn-sm btn-success" type="button">Guardar</button>
+                    <button class="btn btn-sm btn-success" type="submit">Guardar</button>
                 </div>
             </form>
         </div>
@@ -134,8 +141,9 @@ if ($results) {
             <table id="MyTable" class="table table-striped py-4 overflow-auto" style="border: none;">
                 <thead>
                     <tr class="text-center align-middle">
-                        <th class="MyTh">#</th>
+                        <th class="MyTh" style="width:64px !important;">#</th>
                         <th class="MyTh">ID Kommo</th>
+                        <th class="MyTh" style="width:64px !important;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -145,9 +153,16 @@ if ($results) {
                         $result = $mysqli->query($sql);
                         if ($result):
                             while ($row = $result->fetch_assoc()): ?>
-                                <tr>
+                                <tr class="align-middle">
                                     <td><?php echo $row['id']; ?></td>
                                     <td><?php echo $row['fk_id_resposable']; ?></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary p-1"
+                                        data='<?php echo json_encode($row);?>'
+                                        onclick="to_edit(this)"
+                                        ><i class="bi bi-pen-fill"></i></button>
+                                        <!-- <button class="btn btn-sm btn-primary">F</button> -->
+                                    </td>
                                 </tr>
                             <?php endwhile; endif; endif; ?>
                 </tbody>
@@ -156,14 +171,21 @@ if ($results) {
     </div>
 </body>
 <script>
+    $(document).ready(function() {
+        $('#MyTable').DataTable({
+            language: { "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" },
+            // columnDefs: [{ type: 'num', targets: 5 } ], searching: false,paging: false,info: false
+        });
 
-
-    $('#MyTable').DataTable({
-        language: { "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" },
-        // columnDefs: [{ type: 'num', targets: 5 } ]
-        // searching: false,
-        // paging: false,
-        // info: false
+        $('#select').mouseenter(function() {$('.options').slideDown(50);});
+        $('#select').mouseleave(function() {$('.options').slideUp(50);});
     });
+    function to_edit(btn) {
+        const json = JSON.parse(btn.getAttribute('data'));
+        for(var j in json){
+            console.log(j + ' - '+json[j]);
+        }
+    }
+
 
 </script>
