@@ -27,7 +27,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $end = $_POST['date'] . ' ' . $_POST['end'];
     $reason = $_POST['reason'];
     if (isset($_POST['assistants'])) {
-        $assistants = json_encode($_POST['assistants']);
+        // $array_numeros = array_map('intval', $array);
+        $_assistants = array_map('intval',$_POST['assistants']);
+        if (!in_array($fk_id_resposable, $_POST['assistants'] )) {
+            $_assistants[] = $fk_id_resposable;
+        }
+        $assistants = json_encode($_assistants);
     } else {
         $assistants = '[]';
     }
@@ -185,7 +190,7 @@ if ($results) {
                                         <?php foreach ($personal as $p): ?>
                                             <li class="p-1 options rounded" style="display:none;">
                                                 <input type="checkbox" class="p-2 m-1 my_input_list" name="assistants[]"
-                                                    value="<?php echo $p['pid']; ?>">
+                                                    value=<?php echo $p['pid']; ?>>
                                                 <?php echo $p['nombreKommo']; ?>
                                             </li>
                                         <?php endforeach; ?>
@@ -211,7 +216,7 @@ if ($results) {
             </div>
         </div>
 
-        <div class="col-sm-4 p-4">
+        <!-- <div class="col-sm-4 p-4"> -->
             <!-- <h2 class="text-center">Formulario</h2> -->
             <!-- <form class="MyFalseTable" method="POST" action="?php echo $_SERVER['PHP_SELF']; ?>">
                 <input type="hidden" class="my_input" name="id" value="0">
@@ -278,7 +283,7 @@ if ($results) {
                     <button class="btn btn-success" type="submit">Guardar</button>
                 </div>
             </form> -->
-        </div>
+        <!-- </div> -->
         <!-- TABLE -->
         <div class="col-sm-12 p-4">
             <div class="d-flex justify-content-between mb-4">

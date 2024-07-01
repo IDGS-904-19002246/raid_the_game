@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $today = $_POST['MyDate'];
         $MyAsesor = $_POST['MyAsesor'];
         $internal = $_POST['MyExtension'];
+        $pid = $_POST['pid'];
         // $sql = "SELECT 
         //     ca.fecha,
         //     DATE_FORMAT(ca.fecha, '%H:%i') hora
@@ -70,18 +71,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 DATE_FORMAT(ll.call_date, '%H:%i:00') hora1,
                 ll.caller_id,
                 'llamadas' actividad
-            FROM leads_zadarma_llamadas ll WHERE ll.call_date LIKE '{$today}%' AND ll.internal = {$internal}";
+            FROM leads_zadarma_llamadas ll WHERE ll.call_date LIKE '{$today}%' AND ll.internal = {$internal}
+            UNION ALL
+            SELECT
+                1,p.`start`,
+                DATE_FORMAT(p.`start`, '%H:%i') hora,
+                DATE_FORMAT(p.`end`, '%H:%i') hora1,
+                p.reason ,
+                p.`type` actividad
+            FROM tbl_paros p WHERE FIND_IN_SET({$pid}, REPLACE(REPLACE(p.assistants, '[', ''), ']', ''))
+                AND p.`start` LIKE '{$today}%'
+            ";
+        echo $sql;
 
         $result = $mysqli->query($sql);
         if ($result) {
             while ($row = $result->fetch_assoc()) {
-                $data[] = $row;
-                $data_top[] = $row;
-            }
+				$data[] = $row;
+				$data_top[] = $row;
+			}
             usort($data, function ($a, $b) {
                 return strtotime($b['fecha']) - strtotime($a['fecha']);
             });
-            usort($data_top, function ($a, $b) {
+			usort($data_top, function ($a, $b) {
                 return strtotime($b['fecha']) - strtotime($a['fecha']);
             });
             
@@ -90,9 +102,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $data_top[$i]['min'] = '';
                 }else{
                     $date0 = strtotime($data[$i]['hora1']);
+                    
                     $date1 = strtotime($data[$i + 1]['hora1']);
+
                     $time = $date0 - $date1;
                     $data_top[$i]['min'] = $time / 60;
+					$data_top[$i]['after'] = $data[$i + 1]['hora'];
+					
+					if($data[$i]['idkommo']== 0){
+						if($data[$i+1]['idkommo']== 0){
+							if($data[$i+2]['idkommo']== 0){
+								$data[$i]['idkommo'] = $data[$i+3]['idkommo'];
+								$data[$i]['lead_nombre'] = $data[$i+3]['lead_nombre'];
+								$data_top[$i]['idkommo'] = $data[$i+3]['idkommo'];
+								$data_top[$i]['lead_nombre'] = $data[$i+3]['lead_nombre'];
+							}else{
+								$data[$i]['idkommo'] = $data[$i+2]['idkommo'];
+								$data[$i]['lead_nombre'] = $data[$i+2]['lead_nombre'];
+								$data_top[$i]['idkommo'] = $data[$i+2]['idkommo'];
+								$data_top[$i]['lead_nombre'] = $data[$i+2]['lead_nombre'];
+							}
+						}else{
+							$data[$i]['idkommo'] = $data[$i+1]['idkommo'];
+							$data[$i]['lead_nombre'] = $data[$i+1]['lead_nombre'];
+							$data_top[$i]['idkommo'] = $data[$i+1]['idkommo'];
+							$data_top[$i]['lead_nombre'] = $data[$i+1]['lead_nombre'];
+						}
+					}
                 }                
             }
             usort($data_top, function ($a, $b) {
@@ -176,6 +212,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="w-100">
             <form class="row w-100 m-0" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="form">
                 <input type="hidden" name="MyExtension" value="" id="MyExtension">
+                <input type="hidden" name="pid" value="" id="MyPid">
                 <div class="col-sm-2 p-1">
                     <input class="form-control form-control-sm bg-light" type="text" value="ASESOR:" readonly disabled>
                 </div>
@@ -185,12 +222,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <option value="0" extension="0">Ninguno</option>
                         <?php if ($mysqlis->connect_error): ?>
                         <?php else:
-                            $sql2 = "SELECT p.idKommo, p.pnombre, p.idUsuarioKommo, p.extension from dwork_personal p WHERE p.idUsuarioKommo IS NOT null AND p.dip=4 AND p.inactivo=0";
+                            $sql2 = "SELECT p.pid, p.idKommo, p.pnombre, p.idUsuarioKommo, p.extension from dwork_personal p WHERE p.idUsuarioKommo IS NOT null AND p.dip=4 AND p.inactivo=0";
                             $result2 = $mysqlis->query($sql2);
                             if ($result2):
                                 while ($row2 = $result2->fetch_assoc()): ?>
-                                    <option value="<?php echo $row2['idUsuarioKommo']; ?>" <?php echo ($MyAsesor == $row2['idUsuarioKommo'] ? 'selected' : 'no'); ?>
-                                        extension="<?php echo $row2['extension']; ?>"><?php echo $row2['pnombre']; ?></option>
+                                    <option value="<?php echo $row2['idUsuarioKommo']; ?>"
+                                        <?php echo ($MyAsesor == $row2['idUsuarioKommo'] ? 'selected' : 'no'); ?>
+                                        extension="<?php echo $row2['extension']; ?>"
+                                        pid="<?php echo $row2['pid']; ?>"
+                                        ><?php echo $row2['pnombre']; ?></option>
                                 <?php endwhile; ?>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -227,18 +267,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <th class="MyTh">Actividad</th>
                     <th class="MyTh">Hora</th>
                     <th class="MyTh" style="width:150px !important;">Tiempo desde la ultima<br>actividad (min)</th>
+					<th class="MyTh">Anterior</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if (count($data) >= 3): ?>
-                    <?php for ($i = 0; $i < 3; $i++): ?>
+                <?php if (count($data) >= 10): ?>
+                    <?php for ($i = 0; $i < 10; $i++): ?>
                         <tr class="MyTr">
                             <td><?php echo $i+1; ?></td>
-                            <td><?php echo ($data_top[$i]['idkommo'] != '0') ? $data_top[$i]['idkommo'] : 'Llamada'; ?></td>
+                            <td>
+								<?php if( $data_top[$i]['idkommo'] != 0 ) :?>
+									<a href="https://auladisermx.kommo.com/leads/detail/<?php echo $data_top[$i]['idkommo'] ; ?>" target= _blank>
+										<?php echo $data_top[$i]['idkommo'] ; ?>
+									</a>
+								<?php else:?>Llamada<?php endif;?>
+							</td>
                             <td><?php echo $data_top[$i]['lead_nombre']; ?></td>
                             <td><?php echo $data_top[$i]['actividad']; ?></td>
                             <td><?php echo $data_top[$i]['hora']; ?></td>
                             <td><?php echo $data_top[$i]['min']; ?></td>
+							<td><?php echo $data_top[$i]['after']; ?></td>
                         </tr>
                     <?php endfor;?>
                 <?php endif; ?>
@@ -249,7 +297,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- TABLA -->
     <div class="p-4 w-100 ">
         <div class="overflow-auto">
-            <table id="MyTable" class="table table-striped py-4 overflow-auto">
+        <table id="MyTable" class="table table-striped py-4 overflow-auto">
                 <thead>
                     <tr class="text-center align-middle">
                         <th class="MyTh">#</th>
@@ -257,19 +305,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <th class="MyTh">Nombre del Lead</th>
                         <th class="MyTh">Actividad</th>
                         <th class="MyTh">Hora</th>
-                        <th class="MyTh" style="width:150px !important;">Tiempo desde la ultima<br>actividad (min)</th>
+						<th class="MyTh" style="width:150px !important;">Tiempo desde la ultima<br>actividad (min)</th>
+						<th class="MyTh">Anterior</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php for ($i = 0; $i < count($data); $i++): ?>
+                    <?php for ($i = 0; $i < count($data)-2; $i++): ?>
                         <tr class="MyTr">
                             <td><?php echo $i+1; ?></td>
-                            <td><?php echo ($data[$i]['idkommo'] != '0') ? $data[$i]['idkommo'] : 'Llamada'; ?></td>
+                            <td>
+								<?php if( $data[$i]['idkommo'] != 0 && $data[$i]['idkommo'] != 1) :?>
+									<a href="https://auladisermx.kommo.com/leads/detail/<?php echo $data[$i]['idkommo'] ; ?>" target= _blank>
+										<?php echo $data[$i]['idkommo'] ; ?>
+									</a>
+								<?php else:?>Llamada<?php endif;?>
+							</td>
                             <td><?php echo $data[$i]['lead_nombre']; ?></td>
                             <td><?php echo $data[$i]['actividad']; ?></td>
                             <td><?php echo $data[$i]['hora']; ?></td>
                             <td><?php
-                                
                             if($i+1 == count($data)){
                                 echo '';
                             }else{
@@ -277,18 +331,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 $date1 = strtotime($data[$i + 1]['hora1']);
                                 $time = $date0 - $date1;
                                 echo $time / 60;
-
-                                
-                                // echo $data[$i]['hora1'] .'<br>';
-                                // echo $data[$i+1]['hora1'] .'<br>';
-                                
-                                // if ($time <= 3600) {
-                                    
-                                // } else {
-                                //     echo round($time / 3600, 1);
-                                // }
                             }
                             ?></td>
+							<td><?php
+								if($i+1 == count($data)){
+									echo '';
+								}else{
+									echo $data[$i + 1]['hora'];
+								}
+							?></td>
                         </tr>
                     <?php endfor; ?>
                 </tbody>
@@ -363,6 +414,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     select2.addEventListener('click', function (e) {
         var selectedOption = select.options[select.selectedIndex];
         $('#MyExtension').val(selectedOption.getAttribute('extension'));
+        $('#MyPid').val(selectedOption.getAttribute('pid'));
         $('#form').submit();
     });
 </script>
