@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $id = $_POST['id'];
     $fk_id_resposable = $_POST['fk_id_resposable'];
+    $today = $_POST['date'];
     $start = $_POST['date'] . ' ' . $_POST['start'];
     $end = $_POST['date'] . ' ' . $_POST['end'];
     $reason = $_POST['reason'];

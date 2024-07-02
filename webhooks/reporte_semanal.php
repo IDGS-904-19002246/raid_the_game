@@ -34,6 +34,27 @@ $sab = date_create($base->format('Y-m-d'));
 
 // echo date_format($lun,'Y-m-d');
 // echo date_format($lun,"d/M/y");
+$anioActual = date('Y');
+$fecha = new DateTime("$anioActual-01-01");
+$diaSemana = $fecha->format('N');
+if ($diaSemana != 1) {$fecha->modify('next monday');}
+
+$weeks = array();
+while($base >= $fecha){
+    $l = date_format($fecha, 'd M');
+    // $fecha->format('Y-m-d');
+    $v = $fecha->modify('next friday');
+    $new = [
+        'lunes'=>$l,
+        'viernes'=>date_format($v, 'd M')
+        // $v->format('Y-m-d')
+    ];
+    array_push($weeks, $new);
+    $fecha->modify('next monday');
+}
+
+
+$asignados = json_decode('{}', true);
 
 $meets = json_decode('{}', true);
 $inscritos = json_decode('{}', true);
@@ -70,6 +91,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $start = date_format($lun, 'Y-m-d');
         $end = date_format($sab, 'Y-m-d');
+
+        // TOTAL DE ASIGNADOS 
+        $sql = "SELECT JSON_OBJECTAGG(f, c) AS asignados FROM (
+                SELECT
+                    cr.fecha_asignado f,COUNT( DISTINCT cr.idkommo) c
+                FROM leads_kommo_cron cr
+                WHERE cr.idKommoResponsable = {$MyAsesor} 
+                AND (cr.fecha_asignado BETWEEN '{$start}' AND '{$end}')
+                GROUP BY cr.fecha_asignado
+            ) AS asignados";
+        $result = $mysqli->query($sql);
+        if ($result) {
+            $asignados = json_decode($result->fetch_assoc()['asignados'] ?? '{}', true);
+        }
+
+        
         // INSCRITOS
         $sql= "SELECT
             DATE(t.fecha_altagpo) f,COUNT(DISTINCT t.agid) c
@@ -111,6 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	        SELECT DATE(t.fecha) f,COUNT( DISTINCT t.idkommo) c
             FROM leads_kommo_cambios t
             WHERE (t.fecha BETWEEN '" . date_format($lun, 'Y-m-d') . "' AND '" . date_format($sab, 'Y-m-d') . "')
+            AND date(t.fecha) = DATE(t.fecha_asignacion)
             AND t.id_responsable = " . $MyAsesor . " AND t.etapa = 69303183
             GROUP BY DATE(t.fecha)
         ) AS interesados";
@@ -233,24 +271,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php endif; ?>
                     </select>
                 </div>
-                <div class="col-sm-2 border border-dark p-1">
+                <!-- <div class="col-sm-2 border border-dark p-1">
                     <div class="d-flex ">
                         <label for="" class="px-2">Semanas atras</label>
                         <input class="form-control form-control-sm bg-light w-25" type="number"
-                            value="<?php echo $weeksback ?? 0; ?>" name="weeksback" min="0">
+                            value="?php echo $weeksback ?? 0; ?>" name="weeksback" min="0">
                     </div>
-                </div>
-                <div class="col-sm-2 border border-dark p-1">
+                </div> -->
+                <!-- <div class="col-sm-2 border border-dark p-1">
                     <input class="form-control form-control-sm bg-light" type="text" value="CEDULA:" readonly disabled>
                 </div>
                 <div class="col-sm-2 border border-dark p-1">
                     <input type="text" class="form-control form-control-sm" aria-describedby="DateHelp" id="MyCedula"
                         name="MyCedula" value="LEON GUANAJUATO" required>
-                </div>
-                <div class="col-sm-2 border border-dark p-1">
+                </div> -->
+                <div class="col-sm-1 border border-dark p-1">
                     <div class="align-self-center text-center">
                         <button type="button" id="MySubmit" class="btn btn-sm btn-primary w-75">Obtener Reporte</button>
                     </div>
+                </div>
+
+                <div class="col-sm-4 border border-dark p-1">
+                    <select class="form-control form-control-sm" name="weeksback" >
+                        <?php for($i = count($weeks) - 2; $i >= 0; $i--):?>
+                            <option value=<?php echo count($weeks) - $i - 2; ?> ><?php
+                                echo 'Lunes '. $weeks[$i]['lunes'].' - Viernes '. $weeks[$i]['viernes'];
+                                ?></option>    
+                        <?php endfor;?>
+                    </select>
                 </div>
 
             </form>
@@ -282,12 +330,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <td class="align-middle">PROSPECTOS ASIGNADOS</td>
 
                         <td class="MyTd align-middle">PLANEADO</td>
-                        <td class="MyTd align-middle text-center">100</td>
-                        <td class="MyTd align-middle text-center">100</td>
-                        <td class="MyTd align-middle text-center">100</td>
-                        <td class="MyTd align-middle text-center">100</td>
-                        <td class="MyTd align-middle text-center">100</td>
-                        <td class="MyTd align-middle text-center">500</td>
+                        <td class="MyTd align-middle text-center">
+                            <?php echo isset($asignados[date_format($lun, 'Y-m-d')]) ? $asignados[date_format($lun, 'Y-m-d')] : 0; ?>
+                        </td>
+                        <td class="MyTd align-middle text-center">
+                            <?php echo isset($asignados[date_format($mar, 'Y-m-d')]) ? $asignados[date_format($mar, 'Y-m-d')] : 0; ?>
+                        </td>
+                        <td class="MyTd align-middle text-center">
+                            <?php echo isset($asignados[date_format($mie, 'Y-m-d')]) ? $asignados[date_format($mie, 'Y-m-d')] : 0; ?>
+                        </td>
+                        <td class="MyTd align-middle text-center">
+                            <?php echo isset($asignados[date_format($jue, 'Y-m-d')]) ? $asignados[date_format($jue, 'Y-m-d')] : 0; ?>
+                        </td>
+                        <td class="MyTd align-middle text-center">
+                            <?php echo isset($asignados[date_format($vie, 'Y-m-d')]) ? $asignados[date_format($vie, 'Y-m-d')] : 0; ?>
+                        </td>
+                        <td class="MyTd align-middle text-center"><?php echo array_sum($asignados); ?></td>
                         <td></td>
                     </tr>
                     <!-- INTERESADOS NUEVOS -->

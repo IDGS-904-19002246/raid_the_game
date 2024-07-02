@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 DATE_FORMAT(ca.fecha, '%H:%i:00') hora1,
                 ca.lead_nombre,
                 'cambios' actividad
-            FROM leads_kommo_cambios ca  WHERE ca.id_responsable = {$MyAsesor} AND ca.fecha LIKE '{$today}%'
+            FROM leads_kommo_cambios ca  WHERE ca.id_responsable = {$MyAsesor} AND ca.fecha BETWEEN '{$today} 07:00:00' AND '{$today} 15:30:00'
             UNION ALL
             SELECT
                 n.idkommo,
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 DATE_FORMAT(n.fecha, '%H:%i:00') hora1,
                 n.lead_nombre,
                 'notas' actividad
-            FROM leads_kommo_notas n WHERE n.id_responsable = {$MyAsesor} AND n.fecha LIKE '{$today}%'
+            FROM leads_kommo_notas n WHERE n.id_responsable = {$MyAsesor} AND n.fecha BETWEEN '{$today} 07:00:00' AND '{$today} 15:30:00'
             UNION ALL
             SELECT
                 t.idkommo,
@@ -62,16 +62,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 DATE_FORMAT(t.fecha, '%H:%i:00') hora1,
                 t.lead_nombre,
                 'tarea' actividad
-            FROM leads_kommo_tareas t WHERE t.id_responsable = {$MyAsesor} AND t.fecha LIKE '{$today}%'
+            FROM leads_kommo_tareas t WHERE t.id_responsable = {$MyAsesor} AND t.fecha BETWEEN '{$today} 07:00:00' AND '{$today} 15:30:00'
             UNION ALL
             SELECT
                 0,
                 ll.call_date,
                 DATE_FORMAT(ll.call_date, '%H:%i') hora,
                 DATE_FORMAT(ll.call_date, '%H:%i:00') hora1,
-                ll.caller_id,
+                ll.destination,
                 'llamadas' actividad
-            FROM leads_zadarma_llamadas ll WHERE ll.call_date LIKE '{$today}%' AND ll.internal = {$internal}
+            FROM leads_zadarma_llamadas ll WHERE ll.call_date LIKE '{$today}%' AND ll.internal = {$internal} AND ll.destination > 1000
+			
             UNION ALL
             SELECT
                 1,p.`start`,
@@ -80,10 +81,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 p.reason ,
                 p.`type` actividad
             FROM tbl_paros p WHERE FIND_IN_SET({$pid}, REPLACE(REPLACE(p.assistants, '[', ''), ']', ''))
-                AND p.`start` LIKE '{$today}%'
+                AND p.`start` BETWEEN '{$today} 07:00:00' AND '{$today} 15:30:00'
             ";
-        echo $sql;
-
+            echo $sql;
         $result = $mysqli->query($sql);
         if ($result) {
             while ($row = $result->fetch_assoc()) {
@@ -104,6 +104,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $date0 = strtotime($data[$i]['hora1']);
                     
                     $date1 = strtotime($data[$i + 1]['hora1']);
+
+                    // if($i > 2){
+                        if($data[$i]['idkommo'] == 1){
+                            $date0 = strtotime($data[$i]['hora'].':00');
+                            $date1 = strtotime($data[$i+1]['hora1']);
+
+                            echo $data[$i]['hora'].':00'.'<br>';
+                            echo $data[$i+1]['hora1'].'<br>';
+                        }
+
+                        
+                    // }
+                    
 
                     $time = $date0 - $date1;
                     $data_top[$i]['min'] = $time / 60;
@@ -329,6 +342,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             }else{
                                 $date0 = strtotime($data[$i]['hora1']);
                                 $date1 = strtotime($data[$i + 1]['hora1']);
+
+                                if($data[$i]['idkommo'] == 1){
+                                    $date0 = strtotime($data[$i]['hora'].':00');
+                                    $date1 = strtotime($data[$i+1]['hora1']);
+                                }
                                 $time = $date0 - $date1;
                                 echo $time / 60;
                             }
@@ -337,7 +355,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								if($i+1 == count($data)){
 									echo '';
 								}else{
-									echo $data[$i + 1]['hora'];
+                                    if($data[$i+1]['idkommo'] == 1){
+                                        echo $data[$i+1]['hora1'];
+                                    }else{
+                                        echo $data[$i + 1]['hora'];
+                                    }
 								}
 							?></td>
                         </tr>
