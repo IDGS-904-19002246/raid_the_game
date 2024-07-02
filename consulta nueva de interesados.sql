@@ -35,6 +35,23 @@ FROM (
 GROUP BY DATE (fecha)
 ORDER BY fecha;
 
+-- CONSULTA FINAL ----------------------------------------------------
+SELECT JSON_OBJECTAGG(f, c) AS interesados FROM (
+SELECT DATE(fecha) f, COUNT(*) c FROM (
+
+	SELECT
+		ca.idkommo ,
+		MAX(ca.fecha) AS fecha
+	FROM leads_kommo_cambios ca WHERE
+	(ca.fecha_asignacion BETWEEN @fecha1 AND @fecha2)
+	and DATE(ca.fecha_asignacion) = DATE (ca.fecha)
+	-- AND ca.id_responsable = 2 AND ca.etapa = 69303183
+	GROUP BY ca.idkommo
+
+) AS ultima_fecha
+GROUP BY DATE(fecha)
+
+) AS interesados;
 
 
 
