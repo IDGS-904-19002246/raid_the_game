@@ -5,9 +5,6 @@ $session = $_GET['sesion'];
 
 $url = explode("/","$_SERVER[PHP_SELF]");
 $name_file = array_reverse($url)[0];
-// "SELECT * FROM dwork_modulos m
-// INNER JOIN dwork_personal_modulos_permisos mp ON m.modid = mp.modid
-// WHERE mp.pid = 1 AND m.marchivo = 'gruposterm.php'"
 
 // CONTENIDO --------------------------------------------------------------------------------------------
 function conectarDB($ip, $user, $pass, $db)
@@ -25,7 +22,7 @@ date_default_timezone_set('America/Mexico_City');
 $permissions_sql = "SELECT *
     FROM dwork_modulos m
     INNER JOIN dwork_personal_modulos_permisos mp ON m.modid = mp.modid
-    WHERE mp.pid = 1 AND m.marchivo = 'gruposterm.php'";
+    WHERE mp.pid = 1 AND m.marchivo = 'grupos_terminados.php'";
 $permissions_result = $mysqlis->query($permissions_sql);
 if($permissions_result && $permissions_result->num_rows >= 1){
     $MyDisplay = 'd-block';
@@ -37,7 +34,7 @@ if($permissions_result && $permissions_result->num_rows >= 1){
 // TITULO ENCABEZADO -----------------------------------------------
 $ruta="../../thema";
 $module = array();
-$title_result = $mysqlis->query("select * from dwork_modulos where marchivo='gruposterm.php' limit 1");
+$title_result = $mysqlis->query("select * from dwork_modulos where marchivo='grupos_terminados.php' limit 1");
 if($title_result){
     $module = $title_result->fetch_assoc();
 }
@@ -114,69 +111,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
 <div class="MyBody px-4 <?php echo $MyDisplay;?>">
     <!-- ENCABEZADO -->
-    <form class="row p-4" method="POST" action="<?php echo $_SERVER['PHP_SELF'].'?usuario='.$user_id.'&sesion='.$session; ?>">
-        <div class="col-sm-4">Selecciona el Producto</div>
+    
+    <div class="row">
+        <div class="col-sm-8"></div>
         <div class="col-sm-4">
-            <select name="MyProduct" class="form-control form-control-sm">
-                <?php if (!$mysqlis->connect_error):
-                $sql2 = "SELECT
-                        DISTINCT b.pid, a.pnombre, a.ptid,
-                        (SELECT pt.ptdescripcion FROM dwork_empresa_productos_tipos pt WHERE pt.ptid=a.ptid) ptdescripcion
-	
-                    FROM dwork_empresa_productos a
-                    INNER JOIN dwork_empresa_grupos b ON a.pid=b.pid
-                    WHERE a.pactivo=1 AND b.gstatus = 2
-                    ORDER BY a.ptid, a.pid";
-                $result2 = $mysqlis->query($sql2);
-                if ($result2):
-                    while ($row2 = $result2->fetch_assoc()): ?>
-                    <option value=<?php echo $row2['pid']?>>
-                        (<?php echo $row2['pid'];?>) <?php echo $row2['ptdescripcion'] .' - '. $row2['pnombre'];?>
-                    </option>
-                <?php endwhile;endif;endif;?>                    
-            </select>
+            <div width="150" align="center"><font class="agregar">
+            '?usuario='.$user_id.'&sesion='.$session
+                [ <a href="grupos_add.php??usuario=$usuario&sesion=$sesion">Agregar Grupo</a> ]
+            </div>
         </div>
-        <div class="col-sm-4"><button class="btn btn-sm btn-primary" type="submit">Get</button></div>
-    </form>
+        
+    </div>
     <!-- TABLA -->
     <div class="p-4 w-100">
         <table id="MyTable" class="table table-striped py-4 overflow-auto">
             <thead>
                 <tr class="text-center align-middle">
                     <th class="MyTh py-1">Grupo</th>
-                    <th class="MyTh py-1">SEDE</th>
-                    <th class="MyTh py-1">Aula</th>
+                    <th class="MyTh py-1">Sede</th>
                     <th class="MyTh py-1">Producto</th>
                     <th class="MyTh py-1">Asesor</th>
                     <th class="MyTh py-1">Fecha Inicio</th>
                     <th class="MyTh py-1">Fecha Fin</th>
+                    <th class="MyTh py-1">Aula</th>
                     <th class="MyTh py-1">Horario</th>
-                    <th class="MyTh py-1"># alumnos</th>
-                    <th class="MyTh py-1">Detalles</th>
+                    <th class="MyTh py-1">Horas</th>
+                    <th class="MyTh py-1">Costo</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if($MyProduct != 0 and !$mysqlis->connect_error):
+                <?php if(!$mysqlis->connect_error):
                     $sql = "SELECT
-                            p.pid,g.gid,g.sedeclave,
-                            (SELECT au.audescripcion FROM dwork_empresa_aulas au WHERE au.auid = g.auid) aula,
+                            p.pid,g.gid,
+                            (
+                            SELECT (select se.sclave from auladiser_sedes se where se.sid= au.sedeid)
+                            FROM dwork_empresa_aulas au WHERE au.auid = g.auid
+                            ) sede,
                             p.pnombre,
-                            DATE_FORMAT(g.gf_inicio, '%e de %b %y') gf_inicio,
-                            DATE_FORMAT(g.gf_termino, '%e de %b %y') gf_termino,
+                            -- DATE_FORMAT(g.gf_inicio, '%e de %b %y') gf_inicio,
+                            -- DATE_FORMAT(g.gf_termino, '%e de %b %y') gf_termino,
+                            g.gf_inicio,
+                            g.gf_termino,
+                            (SELECT au.audescripcion FROM dwork_empresa_aulas au WHERE au.auid = g.auid) aula,
                             CONCAT(hd.hodesc ,' de ',hh.hohdesc) horario,
-                            (SELECT COUNT(*) FROM dwork_alumnos_grupos ag WHERE ag.gid = g.gid) alumnos
+                            g.gduracion,
+                            g.gprecio
+                            
                         FROM dwork_empresa_grupos g
                         INNER JOIN dwork_empresa_productos p ON g.pid = p.pid
                         INNER JOIN dwork_horarios_dias hd ON hd.hoid= g.hoid
                         INNER JOIN dwork_horarios_horas hh ON hh.hohid= g.hohid
-                        WHERE gstatus = 2 and p.pid = {$MyProduct} ORDER BY g.gid DESC";
+                        WHERE gstatus = 0 ORDER BY g.gf_inicio ASC";
                     $result = $mysqlis->query($sql);
                     if ($result):
                         while ($row = $result->fetch_assoc()):?>
                         <tr class="align-middle MyTr">
                             <td class="py-0"><?php echo $row['gid'];?></td>
-                            <td class="py-0"><?php echo $row['sedeclave'];?></td>
-                            <td class="py-0"><?php echo $row['aula'];?></td>
+                            <td class="py-0"><?php echo $row['sede'];?></td>
                             <td class="py-0"><?php echo $row['pnombre'];?></td>
                             <td class="py-0"><?php
                                 $gid = $row['gid'];
@@ -188,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 if ($result3):
                                     while ($row3 = $result3->fetch_assoc()):?>
                                     <label>
-                                    <a href="../Asesores/pago_instructores_details.php?asid=<?php echo $row3['asid'];?>&amp;gid=<?php echo $row['gid'];?>" onclick="return parent.GB_showCenter('INFORMACION DEL ASESOR', this.href, 500, 900)">
+                                    <a class="link-underline-opacity-0 link-dark" href="../Asesores/pago_instructores_details.php?asid=<?php echo $row3['asid'];?>&amp;gid=<?php echo $row['gid'];?>" onclick="return parent.GB_showCenter('INFORMACION DEL ASESOR', this.href, 500, 900)">
                                         - <?php echo $row3['asesor']; ?>
                                     </a>
                                     </label>
@@ -197,12 +188,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <td class="py-0"><?php echo $row['gf_inicio'];?></td>
                             <td class="py-0"><?php echo $row['gf_termino'];?></td>
+                            <td class="py-0"><?php echo $row['aula'];?></td>
                             <td class="py-0"><?php echo $row['horario'];?></td>
-                            <td class="py-0 text-center"><?php echo $row['alumnos'];?></td>
-                            <td class="py-0 text-center"><button class="btn p-0">
-                                <a href="../Cobranza/cobranzaseg2.php?usuario=1000283&amp;sesion=1qvj3snjkc7cparh7eankgol51&amp;gid=<?php echo $row['gid'];?>"
-                                onclick="return parent.GB_showCenter('DETALLES DEL GRUPO', this.href, 500, 900)"><img src="../../thema/ico_view.jpg" border="0"></a>
-                            </button></td>
+                            <td class="py-0 text-center"><?php echo $row['gduracion'];?></td>
+                            <td class="py-0 text-center"><?php echo $row['gprecio'];?></td>
                         </tr>
                     <?php endwhile;endif;endif;?>                    
             </tbody>
@@ -216,7 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $('#MyTable').DataTable({
             language: { "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" },
             searching: false, paging: false, info: false,
-            order: [[0, 'desc']]
+            order: [[4, 'asc']]
         });
     });
 </script>
