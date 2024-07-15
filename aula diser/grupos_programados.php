@@ -3,7 +3,7 @@
 $user_id = $_GET['usuario'];
 $session = $_GET['sesion'];
 
-$url = explode("/","$_SERVER[PHP_SELF]");
+$url = explode("/", "$_SERVER[PHP_SELF]");
 $name_file = array_reverse($url)[0];
 
 // CONTENIDO --------------------------------------------------------------------------------------------
@@ -24,18 +24,18 @@ $permissions_sql = "SELECT *
     INNER JOIN dwork_personal_modulos_permisos mp ON m.modid = mp.modid
     WHERE mp.pid = 1 AND m.marchivo = 'grupos_terminados.php'";
 $permissions_result = $mysqlis->query($permissions_sql);
-if($permissions_result && $permissions_result->num_rows >= 1){
+if ($permissions_result && $permissions_result->num_rows >= 1) {
     $MyDisplay = 'd-block';
     $MyMessage = '';
-}else{
+} else {
     $MyDisplay = 'd-none';
     $MyMessage = '<br><h2>No tiene permisos<h2>';
 }
 // TITULO ENCABEZADO -----------------------------------------------
-$ruta="../../thema";
+$ruta = "../../thema";
 $module = array();
 $title_result = $mysqlis->query("select * from dwork_modulos where marchivo='grupos_terminados.php' limit 1");
-if($title_result){
+if ($title_result) {
     $module = $title_result->fetch_assoc();
 }
 //-----------------------------------------------
@@ -45,6 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $MyProduct = $_POST['MyProduct'];
 }
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,7 +62,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <style>
         .MyBody * {
-            font-family: Arial;font-size: 12px;}
+            font-family: Arial;
+            font-size: 12px;
+        }
 
         .MyTh {
             border: #3e2b0e solid 1px;
@@ -85,43 +88,66 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             box-shadow: none;
             border: #C1D4F1 solid 1px;
         }
+        #suggestions * {
+            padding: 4px;
+        }
+        #suggestions:has(> *) {
+            border: black solid 1px;
+        }
     </style>
 </head>
 
 <!-- ENCABEZADO -->
 <table width="95%" height="52px" border="0" cellspacing="0" cellpadding="0" align="center">
-  <tr>
-	<td width="55" rowspan="3"><img src="<?php echo $ruta.'/'.$module['micono'];?>"></td>
-     <td><font class="titconten"
-	 	style="font-family: Arial, Helvetica, sans-serif;color: #539ADB;font-size: 14px;font-weight: bold;text-transform: uppercase;">
-         <?php echo $module['mnombre'];?></td>
-  </tr>
-  <tr>
-     <td>	 
-	 	<div style="border: #FF9900 solid;padding: 1px; margin:6px 0px;"></div>
-	 </td>
-  </tr>
-  <tr>
-     <td><div align="justify"><font class="titconten2" style="font-family: Arial, Helvetica, sans-serif;color: #FF6600;font-size: 12px;font-weight: normal;text-transform: uppercase;">
-     <?php echo $module['mdescripcion']?></font></div></td>
-  </tr>
+    <tr>
+        <td width="55" rowspan="3"><img src="<?php echo $ruta . '/' . $module['micono']; ?>"></td>
+        <td>
+            <font class="titconten"
+                style="font-family: Arial, Helvetica, sans-serif;color: #539ADB;font-size: 14px;font-weight: bold;text-transform: uppercase;">
+                <?php echo $module['mnombre']; ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div style="border: #FF9900 solid;padding: 1px; margin:6px 0px;"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div align="justify">
+                <font class="titconten2"
+                    style="font-family: Arial, Helvetica, sans-serif;color: #FF6600;font-size: 12px;font-weight: normal;text-transform: uppercase;">
+                    <?php echo $module['mdescripcion'] ?>
+                </font>
+            </div>
+        </td>
+    </tr>
 </table>
 <div class="text-center">
-    <?php echo $MyMessage;?>
+    <?php echo $MyMessage; ?>
 </div>
-<div class="MyBody px-4 <?php echo $MyDisplay;?>">
-    <!-- ENCABEZADO -->
-    
-    <div class="row">
-        <div class="col-sm-8"></div>
-        <div class="col-sm-4">
-            <div width="150" align="center"><font class="agregar">
-            '?usuario='.$user_id.'&sesion='.$session
-                [ <a href="grupos_add.php??usuario=$usuario&sesion=$sesion">Agregar Grupo</a> ]
+<div class="MyBody px-4 <?php echo $MyDisplay; ?>">
+    <!-- BUSCADOR -->
+    <div class="row p-4 w-100">
+        <div class="col-sm-2" style="font-family: Arial, Helvetica, sans-serif;color: #539ADB;font-size: 14px;font-weight: bold;text-transform: uppercase;">Buscar por ID de Grupo:</div>
+        <div class="col-sm-6 position-relative">
+            <input id="search" type="text" class="form-control form-control-sm bg-light w-100">
+            <div id="suggestions" class="position-absolute overflow-auto rounded z-1 bg-light w-100" style="max-height:250px;"></div>
+        </div>
+    </div>
+    <!-- BOTTON AÑADIR -->
+    <div class="row px-4 w-100">
+        <div class="col-sm-10"></div>
+        <div class="col-sm-2">
+            <div class="col-sm-12 text-center">
+                <a href="grupos_add.php?usuario=<?php echo $user_id;?>&sesion=<?php echo $session;?>"><img src="../../thema/grupos_add.gif" border="0"></a>
+            </div>
+            <div class="col-sm-12 text-center">
+                <font class="agregar">[ <a class="link-underline-opacity-0 link-dark" href="grupos_add.php?usuario=<?php echo $user_id;?>&sesion=<?php echo $session;?>">AGREGAR GRUPO</a> ]</font>
             </div>
         </div>
-        
     </div>
+
     <!-- TABLA -->
     <div class="p-4 w-100">
         <table id="MyTable" class="table table-striped py-4 overflow-auto">
@@ -140,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
             </thead>
             <tbody>
-                <?php if(!$mysqlis->connect_error):
+                <?php if (!$mysqlis->connect_error):
                     $sql = "SELECT
                             p.pid,g.gid,
                             (
@@ -148,8 +174,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             FROM dwork_empresa_aulas au WHERE au.auid = g.auid
                             ) sede,
                             p.pnombre,
-                            -- DATE_FORMAT(g.gf_inicio, '%e de %b %y') gf_inicio,
-                            -- DATE_FORMAT(g.gf_termino, '%e de %b %y') gf_termino,
+                            DATE_FORMAT(g.gf_inicio, '%e de %b %y') gf_inicio_title,
+                            DATE_FORMAT(g.gf_termino, '%e de %b %y') gf_termino_title,
                             g.gf_inicio,
                             g.gf_termino,
                             (SELECT au.audescripcion FROM dwork_empresa_aulas au WHERE au.auid = g.auid) aula,
@@ -164,38 +190,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         WHERE gstatus = 0 ORDER BY g.gf_inicio ASC";
                     $result = $mysqlis->query($sql);
                     if ($result):
-                        while ($row = $result->fetch_assoc()):?>
-                        <tr class="align-middle MyTr">
-                            <td class="py-0"><?php echo $row['gid'];?></td>
-                            <td class="py-0"><?php echo $row['sede'];?></td>
-                            <td class="py-0"><?php echo $row['pnombre'];?></td>
-                            <td class="py-0"><?php
+                        while ($row = $result->fetch_assoc()): ?>
+                            <tr class="align-middle MyTr">
+                                <td class="py-0"><?php echo $row['gid']; ?></td>
+                                <td class="py-0"><?php echo $row['sede']; ?></td>
+                                <td class="py-0"><?php echo $row['pnombre']; ?></td>
+                                <td class="py-0"><?php
                                 $gid = $row['gid'];
-                                $asesor_sql ="SELECT
+                                $asesor_sql = "SELECT
                                         a.asid, concat(a.asnombre,' ',a.asapellido_paterno,' ',a.asapellido_materno) asesor
                                     FROM dwork_empresa_asesores a INNER JOIN dwork_asesores_grupos b ON a.asid=b.asid
                                     WHERE b.gid={$gid} ORDER BY b.asgid ASC";
                                 $result3 = $mysqlis->query($asesor_sql);
                                 if ($result3):
-                                    while ($row3 = $result3->fetch_assoc()):?>
-                                    <label>
-                                    <a class="link-underline-opacity-0 link-dark" href="../Asesores/pago_instructores_details.php?asid=<?php echo $row3['asid'];?>&amp;gid=<?php echo $row['gid'];?>" onclick="return parent.GB_showCenter('INFORMACION DEL ASESOR', this.href, 500, 900)">
-                                        - <?php echo $row3['asesor']; ?>
-                                    </a>
-                                    </label>
+                                    while ($row3 = $result3->fetch_assoc()): ?>
+                                            <label>
+                                                <a class="link-underline-opacity-0 link-dark"
+                                                    href="../Asesores/pago_instructores_details.php?asid=<?php echo $row3['asid']; ?>&amp;gid=<?php echo $row['gid']; ?>"
+                                                    onclick="return parent.GB_showCenter('INFORMACION DEL ASESOR', this.href, 500, 900)">
+                                                    - <?php echo $row3['asesor']; ?>
+                                                </a>
+                                            </label>
 
-                                    <?php endwhile;endif;?></td>
+                                        <?php endwhile; endif; ?>
+                                </td>
 
-                            <td class="py-0"><?php echo $row['gf_inicio'];?></td>
-                            <td class="py-0"><?php echo $row['gf_termino'];?></td>
-                            <td class="py-0"><?php echo $row['aula'];?></td>
-                            <td class="py-0"><?php echo $row['horario'];?></td>
-                            <td class="py-0 text-center"><?php echo $row['gduracion'];?></td>
-                            <td class="py-0 text-center"><?php echo $row['gprecio'];?></td>
-                        </tr>
-                    <?php endwhile;endif;endif;?>                    
+                                <td class="py-0"><?php echo $row['gf_inicio']; ?></td>
+                                <td class="py-0"><?php echo $row['gf_termino']; ?></td>
+                                <td class="py-0"><?php echo $row['aula']; ?></td>
+                                <td class="py-0"><?php echo $row['horario']; ?></td>
+                                <td class="py-0 text-center"><?php echo $row['gduracion']; ?></td>
+                                <td class="py-0 text-center"><?php echo $row['gprecio']; ?></td>
+                            </tr>
+                        <?php endwhile; endif; endif; ?>
             </tbody>
-            
+
         </table>
 
     </div>
@@ -207,5 +236,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             searching: false, paging: false, info: false,
             order: [[4, 'asc']]
         });
+    });
+    document.getElementById('search').addEventListener('input', function () {
+        let query = this.value;
+        if (query.length > 1) {
+            fetch(`search.php?query=${query}`)
+                .then(response => response.json())
+                .then(data => {
+
+                    let suggestionsBox = document.getElementById('suggestions');
+                    suggestionsBox.innerHTML = '';
+                    data.forEach(item => {
+                        let suggestionItem = document.createElement('div');
+
+                        let a = document.createElement('a');
+                        a.href = `gruposcanc.php?usuario=<?php echo $user_id;?>&sesion=<?php echo $session;?>&gid=${item.gid}`;
+                        a.classList.add('link-underline-opacity-0', 'link-dark');
+                        a.textContent = `${item.gid} - ${item.pnombre} - ${item.horario}`;
+
+                        suggestionItem.appendChild(a);
+                        suggestionsBox.appendChild(suggestionItem);
+                    });
+                });
+        } else {
+            document.getElementById('suggestions').innerHTML = '';
+        }
     });
 </script>
